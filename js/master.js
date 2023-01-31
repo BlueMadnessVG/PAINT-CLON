@@ -1,31 +1,46 @@
 var canvas = document.getElementById("canvas");
-var click = true;
+const rContext = canvas.getContext("2d");
+
+var draw = true;
 var X1, X2, Y1, Y2;
 
-canvas.addEventListener( "click", function(event){
-
-  let x = event.offsetX;
-  let y = event.offsetY;
-
-  if ( click ) {
-    X1 = x;
-    Y1 = y;
-    click = false;
-  }
-  else {
-    X2 = x;
-    Y2 = y;
-    drawDDA();
-    click = true;
-  }
-
-  console.log( x + "   " + y );
-  drawpix( x, y );
-
+//TOMA EL PRIMER VALOR PARA HACER UN PREVIEW
+canvas.addEventListener( "mousedown", function(event){
+  rContext.save();
+  X1 = event.offsetX;
+  Y1 = event.offsetY;
+  draw = false;
 });
+//CIERRA EL PREVIEW DEL CANVAS
+canvas.addEventListener( "mouseup", function( event ) {
+  draw = true;
+  rContext.restore();
+});
+//MUESTRA EL PREVIEW Y DIBUJA LAS LIENAS
+canvas.addEventListener( "mousemove", function(event){
 
-function drawBresenham() {
+  if( !draw ) {
+
+    rContext.setTransform(1,0,0,1,0,0);
+    rContext.clearRect(0, 0, canvas.width, canvas.height);
+
+    X2 = event.offsetX;
+    Y2 = event.offsetY;
+    drawBresenham(X1, X2, Y1, Y1);
+
+    Y3 = Y1 + ( X2 - X1 );
+
+    drawBresenham( X1, X1, Y1, Y3 );
+    drawBresenham( X2, X2, Y1, Y3 );
+    drawBresenham( X1, X2, Y3, Y3 );
+
+  }
+
+} );
+
+function drawBresenham(X1, X2, Y1, Y2) {
       console.log(X1 + "   " + Y1 + "  - " + X2 + "   " + Y2);
+
       // DELTAS DE LA LINEA 
       dY = Math.abs( Y2 - Y1 );
       dX = Math.abs( X2 - X1 );
@@ -283,7 +298,6 @@ function drawDDA() {
 }
 
 function drawpix(x,y){
-  var rContext = canvas.getContext("2d");
   rContext.beginPath();
   rContext.moveTo(x,y);
   rContext.lineTo(x+1,y+1);
