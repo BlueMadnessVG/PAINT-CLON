@@ -1,0 +1,7 @@
+#canvas {
+    position: fixed;
+    z-index: 0;
+}
+#canvas-preview {
+    z-index: -1;
+}
