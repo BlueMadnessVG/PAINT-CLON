@@ -4,6 +4,7 @@ var canvaspreview = document.getElementById("canvas-preview");
 const rContextpreview = canvaspreview.getContext("2d");
 
 var Figures = new Array().fill(null);
+var R = 10;
 
 //Struct of the figures
 function makeStruct( names ) {
@@ -29,10 +30,7 @@ canvas.addEventListener( "mousedown", function(event){
   Y1 = event.offsetY;
 
   for(i = 0; i < Figures.length; i++) {
-    console.log(Figures[i].Layer[X1][Y1]);
-
     if( Figures[i].Layer[X1][Y1] ){
-      console.log("entro aqui");
       for( y = 0; y < canvas.height; y++ ){
         for( x = 0; x < canvas.width; x++ ){
           if ( Figures[i].Layer[x][y] ){
@@ -56,11 +54,11 @@ canvas.addEventListener( "mouseup", function( event ) {
     Figures.push( prueba );
   }
 
-  drawMidPointCircule(X1, Y1, 10);
+  drawBresenhamCircule(X1, Y1, R);
   //drawBresenham(X1, X2, Y1, Y2);
   
   console.log(Figures);
-  X1 = null; X2 = null; Y1 = null; Y2 = null;
+  X1 = null; X2 = null; Y1 = null; Y2 = null; R = 10;
 
   rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
   rContext.restore();
@@ -69,12 +67,25 @@ canvas.addEventListener( "mouseup", function( event ) {
 canvas.addEventListener( "mousemove", function(event){
 
   if( !draw ) {
-
+  
     rContextpreview.setTransform(1,0,0,1,0,0);
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
+
+    console.log( X2 + "  " + Y2 +  " " + R);
+    if( (X2 > event.offsetX || Y2 < event.offsetY)  && R >= 11 ) {
+      R--;
+      drawBresenhamCircule(X1, Y1, R);
+    }else if( ( X2 < event.offsetX || Y2 > event.offsetY) ){
+      R++;
+      drawBresenhamCircule(X1, Y1, R);
+    }else {
+      drawBresenhamCircule(X1, Y1, R);
+    }
     X2 = event.offsetX;
     Y2 = event.offsetY;
+    
+
 
     //drawBresenham(X1, X2, Y1, Y2);
 
@@ -342,17 +353,9 @@ function drawDDA() {
 
 function drawMidPointCircule(X1, Y1, R) {
   console.log( X1 + "   " + Y1 + "    " + R );
-  if( X1 > Y1 ){
-    X1 = X1 - ( X1 - Y1 );
-  }
-  else {
-    Y1 = Y1 - ( Y1 - X1 );
-  }
-  console.log( X1 + "   " + Y1 + "    " + R );
-
   X0 = 0;
-  Y0 = 10;
-  P0 = 1 - 10;
+  Y0 = R;
+  P0 = (5/4) - R;
 
   x = X0;
   y = Y0;
@@ -360,21 +363,56 @@ function drawMidPointCircule(X1, Y1, R) {
 
   while( y >= x ) {
 
-    drawpixCircul( x + X1, y + Y1);
-    drawpixCircul( y + Y1, x + X1);
-    drawpixCircul( x + X1,-y + Y1);
-    drawpixCircul(-y + Y1, x + X1);
-    drawpixCircul(-x + X1, y + Y1);
-    drawpixCircul( y + Y1,-x + X1);
-    drawpixCircul(-x + X1,-y + Y1);
-    drawpixCircul(-y + Y1,-x + X1);
+    drawpix( X1 + x , Y1 + y );
+    drawpix( X1 - x , Y1 + y );
+    drawpix( X1 + x , Y1 - y );
+    drawpix( X1 - x , Y1 - y );
+
+    drawpix( X1 + y , Y1 + x );
+    drawpix( X1 - y , Y1 + x );
+    drawpix( X1 + y , Y1 - x );
+    drawpix( X1 - y , Y1 - x );
     x++;
     if( P0  < 0 ) {
-      P0 += 2*x + 1;
+      P0 += (2*x) + 1;
     }
     else {
       y--;
-      P0 += 2*((x + 1) - y);
+      P0 += (2*(x - y)) + 1;
+    }
+
+  }
+
+}
+
+function drawBresenhamCircule(X1, Y1, R) {
+  console.log( X1 + "   " + Y1 + "    " + R );
+  X0 = 0;
+  Y0 = R;
+  P0 = (3-2) * R;
+
+  x = X0;
+  y = Y0;
+  console.log(x + " " + y);
+
+  while( y >= x ) {
+
+    drawpix( X1 + x , Y1 + y );
+    drawpix( X1 - x , Y1 + y );
+    drawpix( X1 + x , Y1 - y );
+    drawpix( X1 - x , Y1 - y );
+
+    drawpix( X1 + y , Y1 + x );
+    drawpix( X1 - y , Y1 + x );
+    drawpix( X1 + y , Y1 - x );
+    drawpix( X1 - y , Y1 - x );
+    x++;
+    if( P0  < 0 ) {
+      P0 += (4*x) + 6;
+    }
+    else {
+      y--;
+      P0 += (4*(x - y)) + 10;
     }
 
   }
@@ -384,27 +422,12 @@ function drawMidPointCircule(X1, Y1, R) {
 function drawpix(x,y){
 
   if(draw){
-    Figures[Figures.length - 1].Layer[x][y] = true;
-    console.log(Figures[Figures.length - 1].Layer[x][y]);
-    rContext.beginPath();
-    rContext.moveTo(x,y);
-    rContext.lineTo(x+1,y+1);
-    rContext.closePath();
-    rContext.stroke();
+    //Figures[Figures.length - 1].Layer[x][y] = true;
+    rContext.fillRect(x,y,1,1);
   }
   else {
-    rContextpreview.beginPath();
-    rContextpreview.moveTo(x,y);
-    rContextpreview.lineTo(x+1,y+1);
-    rContextpreview.closePath();
-    rContextpreview.stroke();
+    rContextpreview.fillRect(x,y,1,1);
   }
-}
-
-function drawpixCircul(x,y) {
-  console.log(x,y);
-  rContext.fillRect(x,y,1,1);
-
 }
 
 function selectPixel(x, y){
