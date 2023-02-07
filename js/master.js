@@ -54,7 +54,7 @@ canvas.addEventListener( "mouseup", function( event ) {
     Figures.push( prueba );
   }
 
-  drawBresenhamCircule(X1, Y1, R);
+  drawTrigonometric(X1, Y1, R);
   //drawBresenham(X1, X2, Y1, Y2);
   
   console.log(Figures);
@@ -414,6 +414,30 @@ function drawBresenhamCircule(X1, Y1, R) {
       y--;
       P0 += (4*(x - y)) + 10;
     }
+
+  }
+
+}
+
+function drawTrigonometric(X1, Y1, R) {
+
+  n = Math.PI * 90 / 180;
+  console.log(n);
+
+  for( i = 0; i < n; i += 0.005 ){
+
+    x = R * Math.cos(i);
+    y = R * Math.sin(i);
+
+    drawpix( X1 + x , Y1 + y );
+    drawpix( X1 - x , Y1 + y );
+    drawpix( X1 + x , Y1 - y );
+    drawpix( X1 - x , Y1 - y );
+
+    drawpix( X1 + y , Y1 + x );
+    drawpix( X1 - y , Y1 + x );
+    drawpix( X1 + y , Y1 - x );
+    drawpix( X1 - y , Y1 - x );
 
   }
 
