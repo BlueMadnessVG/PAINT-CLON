@@ -54,7 +54,7 @@ canvas.addEventListener( "mouseup", function( event ) {
     Figures.push( prueba );
   }
 
-  drawTrigonometric(X1, Y1, R);
+  drawTrigonometricCircle(X1, Y1, R);
   //drawBresenham(X1, X2, Y1, Y2);
   
   console.log(Figures);
@@ -75,12 +75,12 @@ canvas.addEventListener( "mousemove", function(event){
     console.log( X2 + "  " + Y2 +  " " + R);
     if( (X2 > event.offsetX || Y2 < event.offsetY)  && R >= 11 ) {
       R--;
-      drawBresenhamCircule(X1, Y1, R);
+      drawTrigonometricCircle(X1, Y1, R);
     }else if( ( X2 < event.offsetX || Y2 > event.offsetY) ){
       R++;
-      drawBresenhamCircule(X1, Y1, R);
+      drawTrigonometricCircle(X1, Y1, R);
     }else {
-      drawBresenhamCircule(X1, Y1, R);
+      drawTrigonometricCircle(X1, Y1, R);
     }
     X2 = event.offsetX;
     Y2 = event.offsetY;
@@ -419,15 +419,14 @@ function drawBresenhamCircule(X1, Y1, R) {
 
 }
 
-function drawTrigonometric(X1, Y1, R) {
+function drawTrigonometricCircle( X1, Y1, R ) {
 
-  n = Math.PI * 90 / 180;
-  console.log(n);
+  t = (Math.PI * 90) / 180;
 
-  for( i = 0; i < n; i += 0.005 ){
+  for( i = 0; i < t; i += 0.008 ){
 
-    x = R * Math.cos(i);
-    y = R * Math.sin(i);
+    x = Math.cos(i) * R;
+    y = Math.sin(i) * R;
 
     drawpix( X1 + x , Y1 + y );
     drawpix( X1 - x , Y1 + y );
@@ -438,6 +437,27 @@ function drawTrigonometric(X1, Y1, R) {
     drawpix( X1 - y , Y1 + x );
     drawpix( X1 + y , Y1 - x );
     drawpix( X1 - y , Y1 - x );
+
+  }
+
+}
+
+function drawTrigonometric(X1, Y1, R) {
+
+  angle = (Math.PI * 2) / 5;
+
+  ax = R * Math.cos(1 * angle);
+  ay = R * Math.sin(1 * angle);
+  for( p = 0; p <= 5; p++ ){
+
+    tx = R * Math.cos(p * angle);
+    ty = R * Math.sin(p * angle);
+
+    drawpix( X1 + tx , Y1 + ty );
+    drawBresenham( X1 + ax, X1 + tx , Y1 + ay, Y1 + ty);
+
+    ax = tx;
+    ay = ty;
 
   }
 
