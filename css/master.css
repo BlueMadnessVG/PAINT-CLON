@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
+
 * {
     margin: 0;
     padding: 0;
@@ -11,6 +13,13 @@ html, body, .main-body {
 
 }
 
+hr.line {
+    margin: 0;
+    border: 1px solid white;
+
+    margin: 10px;
+}
+
 .main-body {
     display: flex;
     flex-direction: row;
@@ -18,7 +27,16 @@ html, body, .main-body {
 
 .btn-div {
 
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(63,81,181,255);
 
+}
+
+.sub-div {
+
+    display: flex;
+    flex-direction: row;
 
 }
 
@@ -26,11 +44,48 @@ html, body, .main-body {
 
     border: none;
 
-    width: 4rem;
-    height: 4rem;
-
+    width: 3rem;
+    height: 3rem;
     padding: 0.5rem;
-    font-size: 2rem;
+    font-size: 1.3rem;
+    margin: 5px;
+
+    background: none;
+    color: white;
+    border-radius: 50%;
+
+}
+
+.color-btn{
+   
+    border: none;
+
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    font-size: 2.2em;
+    margin: 5px;
+
+    background: none;
+    border-radius: 50%;
+
+}
+
+.color-btn:hover i{
+    border: 2px  solid white;
+    border-radius: 50%;
+}
+
+.icon-btn:hover{
+
+    background-color: white;
+    color: rgba(63,81,181,255);
+
+}
+
+.canvas-div {
+
+    width: 100%;
 
 }
 
