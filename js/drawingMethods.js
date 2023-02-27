@@ -322,7 +322,7 @@ function drawTrigonometricCircle( X1, Y1, R ) {
 
   t = (Math.PI * 90) / 180;
 
-  for( i = 0; i < t; i += 0.008 ){
+  for( i = 0; i < t; i += 0.0008 ){
 
     x = Math.cos(i) * R;
     y = Math.sin(i) * R;
@@ -345,7 +345,7 @@ function drawElipse( X1, Y1, a, b ) {
 
   t = (Math.PI * 90) / 180;
 
-  for( i = 0; i < t; i += 0.008 ){
+  for( i = 0; i < t; i += 0.0008 ){
 
     x = Math.cos(i) * a;
     y = Math.sin(i) * b;

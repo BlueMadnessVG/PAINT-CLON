@@ -23,7 +23,7 @@ function makeStruct( names ) {
   return constructor;
 }
 
-var struct = makeStruct("level,color,Layer");
+var struct = makeStruct("border,backgroundColor,borderColor,Layer");
 
 var draw = true;
 var X1, X2, Y1, Y2;
@@ -49,14 +49,19 @@ function drawFigure() {
   switch (aux) {
 
     case 'line':
+      if( X2 != null || Y2 != null )
       drawBresenham(X1, X2, Y1, Y2);
       break;
     case 'ellipse':
-      drawElipse(X1, Y1, a, b);
+      if( a != 0 || b != 0){
+        drawElipse(X1, Y1, a, b);
+      }
       break;
     case 'shapes':
-      var S = document.getElementsByClassName("input-btn")[0].value;
-      drawTrigonometric(X1, Y1, a, S);  
+      if( a != 0){
+        var S = document.getElementsByClassName("input-btn")[0].value;
+        drawTrigonometric(X1, Y1, a, S);  
+      }
     break;
   }
 
@@ -73,7 +78,7 @@ canvas.addEventListener( "mousedown", function(event){
       for( y = 0; y < canvas.height; y++ ){
         for( x = 0; x < canvas.width; x++ ){
           if ( Figures[i].Layer[x][y] ){
-            selectPixel(x, y);
+            selectPixel(x, y, i);
           }
         }
       }
@@ -90,14 +95,14 @@ canvas.addEventListener( "mouseup", function( event ) {
   draw = true;
 
   if ( X2 != undefined ) {
-    var prueba = new struct( 1,"255, 165, 0, 1", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
+    var prueba = new struct( "1px", "0, 0, 0, 0","63,81,181,255", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
     Figures.push( prueba );
   }
 
   drawFigure();
   
   console.log(Figures);
-  X1 = 0; X2 = 0; Y1 = 0; Y2 = 0; R = 0; a = 0; b = 0;
+  X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
 
   rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
   rContext.restore();
@@ -134,9 +139,10 @@ canvas.addEventListener( "mousemove", function(event){
 } );
 
 function drawpix(x,y){
-
+    x = Math.round(x);
+    y = Math.round(y);
     if(draw){
-      //Figures[Figures.length - 1].Layer[x][y] = true;
+      Figures[Figures.length - 1].Layer[x][y] = true;
       rContext.fillRect(x,y,1,1);
     }
     else {
@@ -144,11 +150,7 @@ function drawpix(x,y){
     }
 }
   
-function selectPixel(x, y){
-    rContext.beginPath();
-    rContext.strokeStyle = "rgba("+ Figures[0].color +")";
-    rContext.moveTo(x,y);
-    rContext.lineTo(x+1,y+1);
-    rContext.closePath();
-    rContext.stroke();
+function selectPixel(x, y, L){
+    rContext.fillStyle = "rgba("+ Figures[L].borderColor +")";
+    rContext.fillRect(x,y,1,1);
 }
