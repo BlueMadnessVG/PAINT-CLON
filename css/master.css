@@ -126,7 +126,7 @@ hr.line {
     border-radius: 50%;
 }
 
-.icon-btn:hover{
+.icon-btn:hover, .active{
 
     background-color: white;
     color: rgba(63,81,181,255);

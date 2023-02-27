@@ -359,13 +359,13 @@ function drawElipse( X1, Y1, a, b ) {
 
 }
 
-function drawTrigonometric(X1, Y1, R) {
+function drawTrigonometric(X1, Y1, R, S) {
 
-  angle = (Math.PI * 2) / 5;
+  angle = (Math.PI * 2) / S;
 
   ax = R * Math.cos(1 * angle);
   ay = R * Math.sin(1 * angle);
-  for( p = 0; p <= 5; p++ ){
+  for( p = 0; p <= S; p++ ){
 
     tx = R * Math.cos(p * angle);
     ty = R * Math.sin(p * angle);

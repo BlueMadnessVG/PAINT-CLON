@@ -5,9 +5,11 @@ const rContextpreview = canvaspreview.getContext("2d");
 var btnCanvas = document.getElementById("canvas-btn");
 const btnContext = canvaspreview.getContext("2d");
 
+const buttons = document.querySelectorAll(".shapes");
+
 var Figures = new Array().fill(null);
-var R = 10;
-var a = 20, b = 10;
+var R = 0;
+var a = 0, b = 0;
 
 //Struct of the figures
 function makeStruct( names ) {
@@ -25,6 +27,40 @@ var struct = makeStruct("level,color,Layer");
 
 var draw = true;
 var X1, X2, Y1, Y2;
+
+buttons.forEach(btn => {
+  btn.addEventListener("click", function(event) {
+
+    buttons.forEach(btnClass => {
+      btnClass.classList.remove("active");
+    });
+  
+    btn.classList.add("active");
+
+  });
+})
+
+
+
+function drawFigure() {
+
+  var aux = document.getElementsByClassName("active")[0].id;
+
+  switch (aux) {
+
+    case 'line':
+      drawBresenham(X1, X2, Y1, Y2);
+      break;
+    case 'ellipse':
+      drawElipse(X1, Y1, a, b);
+      break;
+    case 'shapes':
+      var S = document.getElementsByClassName("input-btn")[0].value;
+      drawTrigonometric(X1, Y1, a, S);  
+    break;
+  }
+
+}
 
 //TOMA EL PRIMER VALOR PARA HACER UN PREVIEW
 canvas.addEventListener( "mousedown", function(event){
@@ -48,6 +84,7 @@ canvas.addEventListener( "mousedown", function(event){
   draw = false;
   
 });
+
 //CIERRA EL PREVIEW DEL CANVAS
 canvas.addEventListener( "mouseup", function( event ) {
   draw = true;
@@ -57,11 +94,10 @@ canvas.addEventListener( "mouseup", function( event ) {
     Figures.push( prueba );
   }
 
-  drawElipse(X1, Y1, a, b);
-  //drawBresenham(X1, X2, Y1, Y2);
+  drawFigure();
   
   console.log(Figures);
-  X1 = null; X2 = null; Y1 = null; Y2 = null; R = 10; a = 20; b = 10;
+  X1 = 0; X2 = 0; Y1 = 0; Y2 = 0; R = 0; a = 0; b = 0;
 
   rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
   rContext.restore();
@@ -75,43 +111,23 @@ canvas.addEventListener( "mousemove", function(event){
     rContextpreview.setTransform(1,0,0,1,0,0);
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
-
-    /* console.log( X2 + "  " + Y2 +  " " + R);
-    if( (X2 > event.offsetX || Y2 < event.offsetY)  && R >= 11 ) {
-      R--;
-      drawTrigonometricCircle(X1, Y1, R);
-    }else if( ( X2 < event.offsetX || Y2 > event.offsetY) ){
-      R++;
-      drawTrigonometricCircle(X1, Y1, R);
-    }else {
-      drawTrigonometricCircle(X1, Y1, R);
-    } */
-
     if( X2 > event.offsetX ) {
-      a--;
+      a += X2 - event.offsetX;
     }else if( X2 < event.offsetX ){
-      a++;
+      a -= event.offsetX - X2;
     }
     else if( Y2 > event.offsetY ) {
-      b--;
+      b += Y2 - event.offsetY;
     }
     else if( Y2 < event.offsetY ) {
-      b++;
+      b -= event.offsetY - Y2;
     }
 
-    drawElipse(X1, Y1, a, b);
+    //drawElipse(X1, Y1, a, b);
     X2 = event.offsetX;
     Y2 = event.offsetY;
-    
 
-
-    //drawBresenham(X1, X2, Y1, Y2);
-
-/*     Y3 = Y1 + ( X2 - X1 );
-
-    drawBresenham( X1, X1, Y1, Y3 );
-    drawBresenham( X2, X2, Y1, Y3 );
-    drawBresenham( X1, X2, Y3, Y3 ); */
+    drawFigure();
 
   }
 
