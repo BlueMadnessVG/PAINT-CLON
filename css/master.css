@@ -1,5 +1,16 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -40,8 +51,31 @@ hr.line {
 
 }
 
+.input-btn {
+
+    position: relative;
+
+    width: 3rem;
+    height: 3rem;
+    padding: 0.5rem;
+    font-size: 1.3rem;
+    margin: 5px;
+
+    border-radius: 1rem;
+    border-color: white;
+    text-align: center;
+    text-justify:newspaper;
+
+}
+
+.rotacion {
+    transform: translateX(50%, 50%);
+    transform: rotate(-90deg);
+}
+
 .icon-btn {
 
+    position: relative;
     border: none;
 
     width: 3rem;
@@ -55,6 +89,22 @@ hr.line {
     border-radius: 50%;
 
 }
+
+.icon-btn input {
+    width: 45px;
+    height: 42px;
+    line-height: 1.65;
+    float: left;
+    display: block;
+    padding: 0;
+    margin: 0;
+    padding-left: 20px;
+    border: none;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    font-size: 1rem;
+    border-radius: 4px;
+  }
+
 
 .color-btn{
    

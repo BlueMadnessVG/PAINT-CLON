@@ -66,7 +66,7 @@ function drawBresenham(X1, X2, Y1, Y2) {
       }   
 }
 
-function drawMidPoint() {
+function drawMidPoint(X1, X2, Y1, Y2) {
   console.log(X1 + "   " + Y1 + "  - " + X2 + "   " + Y2);
       // DELTAS DE LA LINEA 
       dY = Math.abs( Y2 - Y1 );
@@ -91,7 +91,7 @@ function drawMidPoint() {
         }
         //DUBUJAMOS EL PRIMER PIXEL
         console.log(x + "   " + y);
-        drawpix( x, y );
+        drawpixBtn( x, y );
         //CICLO PARA DIBUJAR LA LINEA
         for ( i = 0; i < dX ; i++ ) {
           x++;
@@ -107,7 +107,7 @@ function drawMidPoint() {
             pX = pX + pD;
           }
           console.log(x + "   " + y);
-          drawpix( x, y );
+          drawpixBtn( x, y );
         }
       } else {
         pD = 2 * ( dX - dY );
@@ -123,7 +123,7 @@ function drawMidPoint() {
         }
         //DUBUJAMOS EL PRIMER PIXEL
         console.log(x + "   " + y + "   " + xend);
-        drawpix( x, y );
+        drawpixBtn( x, y );
         //CICLO PARA DIBUJAR LA LINE
         for ( i = 0; i < dY; i++ ) {
           y += 1;
@@ -138,7 +138,7 @@ function drawMidPoint() {
             pY = pY + pD;
           }
           console.log(x + "   " + y);
-          drawpix( x, y );
+          drawpixBtn( x, y );
         }
       }
 }

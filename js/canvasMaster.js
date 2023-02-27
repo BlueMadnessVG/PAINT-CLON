@@ -2,6 +2,8 @@ var canvas = document.getElementById("canvas");
 const rContext = canvas.getContext("2d");
 var canvaspreview = document.getElementById("canvas-preview");
 const rContextpreview = canvaspreview.getContext("2d");
+var btnCanvas = document.getElementById("canvas-btn");
+const btnContext = canvaspreview.getContext("2d");
 
 var Figures = new Array().fill(null);
 var R = 10;
