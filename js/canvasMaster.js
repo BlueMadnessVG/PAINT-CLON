@@ -10,6 +10,7 @@ const buttons = document.querySelectorAll(".shapes");
 var Figures = new Array().fill(null);
 var R = 0;
 var a = 0, b = 0;
+var type = ""; 
 
 //Struct of the figures
 function makeStruct( names ) {
@@ -23,7 +24,7 @@ function makeStruct( names ) {
   return constructor;
 }
 
-var struct = makeStruct("border,backgroundColor,borderColor,Layer");
+var struct = makeStruct("type,sp1,sp2,a,b,border,backgroundColor,borderColor,Layer");
 
 var draw = true;
 var X1, X2, Y1, Y2;
@@ -44,9 +45,9 @@ buttons.forEach(btn => {
 
 function drawFigure() {
 
-  var aux = document.getElementsByClassName("active")[0].id;
+  type = document.getElementsByClassName("active")[0].id;
 
-  switch (aux) {
+  switch (type) {
 
     case 'line':
       if( X2 != null || Y2 != null )
@@ -95,7 +96,7 @@ canvas.addEventListener( "mouseup", function( event ) {
   draw = true;
 
   if ( X2 != undefined ) {
-    var prueba = new struct( "1px", "0, 0, 0, 0","63,81,181,255", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
+    var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, "1px", "0, 0, 0, 0","63,81,181,255", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
     Figures.push( prueba );
   }
 
@@ -128,7 +129,6 @@ canvas.addEventListener( "mousemove", function(event){
       b -= event.offsetY - Y2;
     }
 
-    //drawElipse(X1, Y1, a, b);
     X2 = event.offsetX;
     Y2 = event.offsetY;
 
