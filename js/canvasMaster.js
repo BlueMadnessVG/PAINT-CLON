@@ -7,6 +7,16 @@ const btnContext = canvaspreview.getContext("2d");
 
 const buttons = document.querySelectorAll(".shapes");
 
+var slider = document.getElementById("myRange");
+var output = document.getElementById("border");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+
+var borderColor = document.getElementById("borderColor");
+
 var Figures = new Array().fill(null);
 var R = 0;
 var a = 0, b = 0;
@@ -74,6 +84,11 @@ canvas.addEventListener( "mousedown", function(event){
   X1 = event.offsetX;
   Y1 = event.offsetY;
 
+  console.log(buttons);
+
+  rContext.fillStyle = borderColor.value;
+  rContextpreview.fillStyle = borderColor.value;
+
   for(i = 0; i < Figures.length; i++) {
     if( Figures[i].Layer[X1][Y1] ){
       for( y = 0; y < canvas.height; y++ ){
@@ -96,7 +111,7 @@ canvas.addEventListener( "mouseup", function( event ) {
   draw = true;
 
   if ( X2 != undefined ) {
-    var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, "1px", "0, 0, 0, 0","63,81,181,255", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
+    var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, slider.value, "0, 0, 0, 0","63,81,181,255", new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
     Figures.push( prueba );
   }
 
@@ -143,14 +158,14 @@ function drawpix(x,y){
     y = Math.round(y);
     if(draw){
       Figures[Figures.length - 1].Layer[x][y] = true;
-      rContext.fillRect(x,y,1,1);
+      rContext.fillRect(x,y,slider.value,slider.value);
     }
     else {
-      rContextpreview.fillRect(x,y,1,1);
+      rContextpreview.fillRect(x,y,slider.value,slider.value);
     }
 }
   
 function selectPixel(x, y, L){
-    rContext.fillStyle = "rgba("+ Figures[L].borderColor +")";
-    rContext.fillRect(x,y,1,1);
+    rContext.fillStyle = "rgba(63,81,181,255)";
+    rContext.fillRect(x,y, Figures[L].border, Figures[L].border);
 }

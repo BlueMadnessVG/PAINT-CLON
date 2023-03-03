@@ -35,7 +35,7 @@
         <button class="icon-btn"> <i class="fa-regular fa-object-group"></i> </button>
       </div>
       <div class="sub-div">
-        <button class="icon-btn"> <i class="fa-regular fa-hand"></i> </button>
+        <button class="icon-btn shapes" id="move"> <i class="fa-regular fa-hand"></i> </button>
         <button class="icon-btn"> <i class="fa-solid fa-fill-drip"></i> </button>
       </div>
 
@@ -54,8 +54,12 @@
       <hr class="line">
 
       <div class="slidecontainer">
-        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-        <p>Value: <span id="demo"></span></p>
+        <p>Borde: <span id="border"></span></p>
+        <input type="range" min="1" max="10" value="2" class="slider" id="myRange">
+      </div>
+
+      <div class="cp_wrapper">
+        <input type="color" id="borderColor" value="#fffff" />
       </div>
 
     </div>
