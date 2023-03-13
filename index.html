@@ -9,6 +9,7 @@
   <script src="https://kit.fontawesome.com/167cc065d2.js" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <title>  </title>
 </head>
@@ -27,23 +28,19 @@
 
       <!-- TOOLS -->
       <div class="sub-div">
-        <button class="icon-btn"> <i class="fa-solid fa-pen"></i> </button>
-        <button class="icon-btn"> <i class="fa-solid fa-paintbrush"></i> </button>
+        <button class="icon-btn config"> <i class="fa-solid fa-pen"></i> </button>
+        <button class="icon-btn config" id="color"> <i class="fa-solid fa-paintbrush"></i> </button>
       </div>
       <div class="sub-div">
-        <button class="icon-btn"> <i class="fa-solid fa-object-ungroup"></i> </button>
-        <button class="icon-btn"> <i class="fa-regular fa-object-group"></i> </button>
-      </div>
-      <div class="sub-div">
-        <button class="icon-btn shapes" id="move"> <i class="fa-regular fa-hand"></i> </button>
-        <button class="icon-btn"> <i class="fa-solid fa-fill-drip"></i> </button>
+        <button class="icon-btn config" id="move"> <i class="fa-regular fa-hand"></i> </button>
+        <button class="icon-btn config"> <i class="fa-solid fa-fill-drip"></i> </button>
       </div>
 
       <hr class="line">
   
       <!-- SHAPES -->
       <div class="sub-div">
-        <button class="icon-btn shapes active" id="line"> <i class="fa-solid fa-slash"></i> </button>
+        <button class="icon-btn shapes activeS" id="line"> <i class="fa-solid fa-slash"></i> </button>
         <button class="icon-btn shapes" id="ellipse"> <i class="fa-regular fa-circle"></i> </button>
       </div>
       <div class="sub-div">
@@ -64,9 +61,17 @@
 
     </div>
   
-    <div class="canvas-div">
+    <div id="canvas-div">
       <canvas id="canvas" width="800" height="800" ></canvas>
       <canvas id="canvas-preview" width="800" height="800" ></canvas>
+    </div>
+
+    <div id="menu"> 
+      <button class="menu-btn" id="moveUp"> <i class="fa-solid fa-chevron-up"></i> Mandar adelante </button>
+      <button class="menu-btn" id="moveDown"> <i class="fa-solid fa-chevron-down"></i> Mandar atras </button>
+      <button class="menu-btn" id="color"> <i class="fa-solid fa-brush"></i> Repintar </button>
+      <button class="menu-btn" id="clear"> <i class="fa-solid fa-trash-can"></i> Borrar </button>
+
     </div>
 
   </div>

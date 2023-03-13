@@ -125,14 +125,14 @@ hr.line {
     border-radius: 50%;
 }
 
-.icon-btn:hover, .active{
+.icon-btn:hover, .activeS, .activeC{
 
     background-color: white;
     color: rgba(63,81,181,255);
 
 }
 
-.canvas-div {
+#canvas-div {
 
     width: 100%;
 
@@ -140,10 +140,10 @@ hr.line {
 
 #canvas {
     position: fixed;
-    z-index: 0;
+    z-index: 1;
 }
 #canvas-preview {
-    z-index: -1;
+    z-index: 0;
 }
 
 .slider {
@@ -197,4 +197,44 @@ hr.line {
     border-radius: 50%;
     box-shadow: 1px 1px 3px 0px grey;
     margin: 1em;
+  }
+
+  #menu {
+
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+
+    width: 12rem;
+    height: auto;
+
+    z-index: 99;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.815);
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+  }
+
+  .menu-btn {
+
+    background: none;
+    color: white;
+    padding: 0 10px 0 10px;
+    text-align: left;
+    border: none;
+
+  }
+
+  .menu-btn:hover{
+
+    background-color: rgba(255, 255, 255, 0.226);
+
+  }
+
+  .menu-btn i {
+
+    margin-right: 5px;
+
   }
