@@ -41,8 +41,9 @@ function makeStruct( names ) {
 var struct = makeStruct("type,sp1,sp2,a,b,border,backgroundColor,borderColor,Layer");
 
 var draw = true;
+var move = true;
 var index = 0;
-var X1, X2, Y1, Y2;
+var X1, X2, Y1, Y2, aux1, aux2;
 
 function redrawCanvas() {
 
@@ -101,15 +102,6 @@ menuButtons.forEach(btn => {
         menuDisplayNone();
 
         break;
-      case 'color':
-
-        if( Figures[index].borderColor != borderColor.value ){
-          Figures[index].borderColor = borderColor.value;
-          redrawCanvas();
-        }
-        menuDisplayNone();
-
-        break;
       case 'clear':
 
         Figures.splice(index, 1);
@@ -132,6 +124,9 @@ buttons.forEach(btn => {
     buttons.forEach(btnClass => {
       btnClass.classList.remove("activeS");
     });
+    configButtons.forEach(btnClass => {
+      btnClass.classList.remove("activeC");
+    });
   
     btn.classList.add("activeS");
 
@@ -141,6 +136,9 @@ buttons.forEach(btn => {
 configButtons.forEach(btns => {
   btns.addEventListener("click", function(event) {
 
+    buttons.forEach(btnClass => {
+      btnClass.classList.remove("activeS");
+    });
     configButtons.forEach(btnClass => {
       btnClass.classList.remove("activeC");
     });
@@ -150,27 +148,30 @@ configButtons.forEach(btns => {
   });
 })
 
-function drawFigure() {
+function drawFigure( type ) {
 
-  type = document.getElementsByClassName("activeS")[0].id;
+  if( type != undefined ) {
 
-  switch (type) {
-
-    case 'line':
-      if( X2 != null || Y2 != null )
-      drawBresenham(X1, X2, Y1, Y2);
+    switch (type) {
+  
+      case 'line':
+        console.log(X1 + "  " + X2);
+        if( X2 != null || Y2 != null )
+        drawBresenham(X1, X2, Y1, Y2);
+        break;
+      case 'ellipse':
+        if( a != 0 || b != 0){
+          drawElipse(X1, Y1, a, b);
+        }
+        break;
+      case 'shapes':
+        if( a != 0){
+          var S = document.getElementsByClassName("input-btn")[0].value;
+          drawTrigonometric(X1, Y1, a, S);  
+        }
       break;
-    case 'ellipse':
-      if( a != 0 || b != 0){
-        drawElipse(X1, Y1, a, b);
-      }
-      break;
-    case 'shapes':
-      if( a != 0){
-        var S = document.getElementsByClassName("input-btn")[0].value;
-        drawTrigonometric(X1, Y1, a, S);  
-      }
-    break;
+    }
+
   }
 
 }
@@ -180,6 +181,29 @@ function configCanvas() {
   type = document.getElementsByClassName("activeC")[0].id;
 
   switch(type){
+
+    case 'move':
+       
+      for(i = 0; i < Figures.length; i++) {
+        if( Figures[i].Layer[X1][Y1] ){
+
+          move = false;
+          X1 = Figures[i].sp1[0]; X2 = Figures[i].sp2[0]; Y1 = Figures[i].sp1[1]; Y2 = Figures[0].sp2[1];
+          aux1 = X1;
+          aux2 = Y1;
+
+          if( Figures[i].type == "shapes" || Figures[i].type == "ellipse" ){
+            a = Figures[i].a;
+            b = Figures[i].b;
+          }
+
+          index = i;
+          console.log(Figures[index]);
+          i = Figures.length;
+
+        }
+      }
+      break;
 
     case 'color':
 
@@ -191,7 +215,6 @@ function configCanvas() {
           redrawCanvas();
         }
       }
-
       break;
 
   }
@@ -240,30 +263,51 @@ canvas.addEventListener( "mousedown", function(event){
     if( document.getElementsByClassName("activeC")[0] != undefined ){
       configCanvas();
     }
+    else {
+      draw = false;
+    }
 
     rContext.fillStyle = borderColor.value;
     rContextpreview.fillStyle = borderColor.value;
-    draw = false;
+  
   }
   
 });
 
 //CIERRA EL PREVIEW DEL CANVAS
 canvas.addEventListener( "mouseup", function( event ) {
-  draw = true;
 
-  if ( X2 != undefined ) {
-    var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, slider.value, "0, 0, 0, 0",borderColor.value, new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
-    Figures.push( prueba );
+  if( !draw ){
+    
+    draw = true;
+    type = document.getElementsByClassName("activeS")[0].id;
+
+    if ( X2 != undefined ) {
+      var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, slider.value, "0, 0, 0, 0",borderColor.value, new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
+      Figures.push( prueba );
+    }
+  
+    drawFigure( type );
+    
+    console.log(Figures);
+    X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
+  
+    rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
+    rContext.restore();
+
+  }
+  else if( !move ){
+
+    canvas.style.cursor = "default";
+    move = true;
+
+    X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
+    rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
+    rContext.restore();
+
   }
 
-  drawFigure();
-  
-  console.log(Figures);
-  X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
 
-  rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
-  rContext.restore();
 });
 
 //MUESTRA EL PREVIEW Y DIBUJA LAS LIENAS
@@ -289,7 +333,36 @@ canvas.addEventListener( "mousemove", function(event){
     X2 = event.offsetX;
     Y2 = event.offsetY;
 
-    drawFigure();
+    drawFigure( document.getElementsByClassName("activeS")[0].id );
+
+  }
+  else if( !move ) {
+
+    rContextpreview.setTransform(1,0,0,1,0,0);
+    rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
+
+    if( aux1 > event.offsetX ) {
+      X1 -= aux1 - event.offsetX;
+      X2 -= aux1 - event.offsetX;
+    } 
+    else{
+      X1 += event.offsetX - aux1;
+      X2 += event.offsetX - aux1;
+    }
+
+    if( aux2 < event.offsetY ) {
+      Y1 -= aux2 - event.offsetY;
+      Y2 -= aux2 - event.offsetY;
+    }
+    else {
+      Y1 += event.offsetY - aux2;
+      Y2 += event.offsetY - aux2;
+    }
+
+    aux1 = event.offsetX;
+    aux2 = event.offsetY;
+
+    drawFigure( Figures[index].type );
 
   }
 
@@ -298,7 +371,7 @@ canvas.addEventListener( "mousemove", function(event){
 function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
-    if(draw){
+    if( (draw && move) ){
       Figures[Figures.length - 1].Layer[x][y] = true;
       rContext.fillRect(x,y,slider.value,slider.value);
     }
