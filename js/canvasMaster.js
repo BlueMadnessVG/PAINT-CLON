@@ -48,12 +48,27 @@ var X1, X2, Y1, Y2, aux1, aux2;
 function redrawCanvas() {
 
   for(i = 0; i < Figures.length; i++) {
-    for( y = 0; y < canvas.height; y++ ){
-      for( x = 0; x < canvas.width; x++ ){
-        if ( Figures[i].Layer[x][y] ){
-          redrawPixel(x, y, i);
+    console.log(move + "    " + (index != i));
+    if( move ){
+
+      for( y = 0; y < canvas.height; y++ ){
+        for( x = 0; x < canvas.width; x++ ){
+          if ( Figures[i].Layer[x][y] ){
+            redrawPixel(x, y, i);
+          }
         }
       }
+
+    }
+    else if( index != i ){
+      for( y = 0; y < canvas.height; y++ ){
+        for( x = 0; x < canvas.width; x++ ){
+          if ( Figures[i].Layer[x][y] ){
+            redrawPixel(x, y, i);
+          }
+        }
+      }
+
     }
   }
 
@@ -63,6 +78,7 @@ function menuDisplayNone() {
 
   menu.style.display = "none";
   for(i = 0; i < Figures.length; i++) {
+    console.log(i);
     for( y = 0; y < canvas.height; y++ ){
       for( x = 0; x < canvas.width; x++ ){
         if ( Figures[i].Layer[x][y] ){
@@ -155,9 +171,8 @@ function drawFigure( type ) {
     switch (type) {
   
       case 'line':
-        console.log(X1 + "  " + X2);
         if( X2 != null || Y2 != null )
-        drawBresenham(X1, X2, Y1, Y2);
+          drawBresenham(X1, X2, Y1, Y2);
         break;
       case 'ellipse':
         if( a != 0 || b != 0){
@@ -183,7 +198,6 @@ function configCanvas() {
   switch(type){
 
     case 'move':
-       
       for(i = 0; i < Figures.length; i++) {
         if( Figures[i].Layer[X1][Y1] ){
 
@@ -200,6 +214,8 @@ function configCanvas() {
           index = i;
           console.log(Figures[index]);
           i = Figures.length;
+
+          rContext.clearRect(0, 0, canvas.width, canvas.height);
 
         }
       }
@@ -227,8 +243,6 @@ window.addEventListener("contextmenu", e => e.preventDefault());
 canvas.addEventListener( "mousedown", function(event){
 
   event.preventDefault();
-  
-  rContext.save();
   X1 = event.offsetX;
   Y1 = event.offsetY;
 
@@ -258,7 +272,6 @@ canvas.addEventListener( "mousedown", function(event){
 
   }
   else {
-    menuDisplayNone();
 
     if( document.getElementsByClassName("activeC")[0] != undefined ){
       configCanvas();
@@ -293,7 +306,6 @@ canvas.addEventListener( "mouseup", function( event ) {
     X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
   
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
-    rContext.restore();
 
   }
   else if( !move ){
@@ -301,9 +313,13 @@ canvas.addEventListener( "mouseup", function( event ) {
     canvas.style.cursor = "default";
     move = true;
 
+    Figures[index].sp1 = [X1, Y1];
+    Figures[index].sp2 = [X2, Y2];
+    drawFigure( Figures[index].type );
+    console.log(Figures);
+
     X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
-    rContext.restore();
 
   }
 
@@ -315,7 +331,6 @@ canvas.addEventListener( "mousemove", function(event){
 
   if( !draw ) {
   
-    rContextpreview.setTransform(1,0,0,1,0,0);
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
     if( X2 > event.offsetX ) {
@@ -338,29 +353,18 @@ canvas.addEventListener( "mousemove", function(event){
   }
   else if( !move ) {
 
-    rContextpreview.setTransform(1,0,0,1,0,0);
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
-
-    if( aux1 > event.offsetX ) {
-      X1 -= aux1 - event.offsetX;
-      X2 -= aux1 - event.offsetX;
-    } 
-    else{
-      X1 += event.offsetX - aux1;
-      X2 += event.offsetX - aux1;
-    }
-
-    if( aux2 < event.offsetY ) {
-      Y1 -= aux2 - event.offsetY;
-      Y2 -= aux2 - event.offsetY;
-    }
-    else {
-      Y1 += event.offsetY - aux2;
-      Y2 += event.offsetY - aux2;
-    }
 
     aux1 = event.offsetX;
     aux2 = event.offsetY;
+
+    var dx = aux1 - X1;
+    var dy = aux2 - Y1;
+
+    X1 += dx;
+    X2 += dx;
+    Y1 += dy;
+    Y2 += dy;
 
     drawFigure( Figures[index].type );
 
