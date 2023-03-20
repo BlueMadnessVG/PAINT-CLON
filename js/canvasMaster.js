@@ -22,7 +22,7 @@ slider.oninput = function() {
 var borderColor = document.getElementById("borderColor");
 
 var Figures = new Array().fill(null);
-var R = 0;
+var R = 0, S = 3;
 var a = 0, b = 0;
 var type = ""; 
 
@@ -38,131 +38,14 @@ function makeStruct( names ) {
   return constructor;
 }
 
-var struct = makeStruct("type,sp1,sp2,a,b,border,backgroundColor,borderColor,Layer");
+var struct = makeStruct("type,sp1,sp2,a,b,n,border,backgroundColor,borderColor,Layer");
 
 var draw = true;
-var move = true;
-var index = 0;
+var move = false;
+var resize = false;
+var index;
 var X1, X2, Y1, Y2, aux1, aux2;
 
-function redrawCanvas() {
-
-  for(i = 0; i < Figures.length; i++) {
-    console.log(move + "    " + (index != i));
-    if( move ){
-
-      for( y = 0; y < canvas.height; y++ ){
-        for( x = 0; x < canvas.width; x++ ){
-          if ( Figures[i].Layer[x][y] ){
-            redrawPixel(x, y, i);
-          }
-        }
-      }
-
-    }
-    else if( index != i ){
-      for( y = 0; y < canvas.height; y++ ){
-        for( x = 0; x < canvas.width; x++ ){
-          if ( Figures[i].Layer[x][y] ){
-            redrawPixel(x, y, i);
-          }
-        }
-      }
-
-    }
-  }
-
-}
-
-function menuDisplayNone() {
-
-  menu.style.display = "none";
-  for(i = 0; i < Figures.length; i++) {
-    console.log(i);
-    for( y = 0; y < canvas.height; y++ ){
-      for( x = 0; x < canvas.width; x++ ){
-        if ( Figures[i].Layer[x][y] ){
-          redrawPixel(x, y, i);
-        }
-      }
-    }
-  }
-
-}
-
-function moveFigure(Newindex) {
-
-  const element = Figures.splice(index, 1)[0];
-  Figures.splice(Newindex, 0, element);
-  console.log(Figures);
-
-}
-
-menuButtons.forEach(btn => {
-  btn.addEventListener("click", function(event) {
-    switch (btn.id) {
-      case 'moveUp':
-        if( index != Figures.length - 1 ){
-          moveFigure(index + 1);
-          redrawCanvas();
-        }
-        menuDisplayNone();
-
-        break;
-      case 'moveDown':
-
-        if( index != 0 ){
-          moveFigure(index - 1);
-          redrawCanvas();
-        }
-        menuDisplayNone();
-
-        break;
-      case 'clear':
-
-        Figures.splice(index, 1);
-        console.log(Figures);
-
-        rContext.clearRect(0, 0, canvas.width, canvas.height);
-
-        redrawCanvas();
-        menuDisplayNone();
-
-        break;
-    }
-
-  });
-})
-
-buttons.forEach(btn => {
-  btn.addEventListener("click", function(event) {
-
-    buttons.forEach(btnClass => {
-      btnClass.classList.remove("activeS");
-    });
-    configButtons.forEach(btnClass => {
-      btnClass.classList.remove("activeC");
-    });
-  
-    btn.classList.add("activeS");
-
-  });
-})
-
-configButtons.forEach(btns => {
-  btns.addEventListener("click", function(event) {
-
-    buttons.forEach(btnClass => {
-      btnClass.classList.remove("activeS");
-    });
-    configButtons.forEach(btnClass => {
-      btnClass.classList.remove("activeC");
-    });
-  
-    btns.classList.add("activeC");
-
-  });
-})
 
 function drawFigure( type ) {
 
@@ -181,7 +64,6 @@ function drawFigure( type ) {
         break;
       case 'shapes':
         if( a != 0){
-          var S = document.getElementsByClassName("input-btn")[0].value;
           drawTrigonometric(X1, Y1, a, S);  
         }
       break;
@@ -191,53 +73,23 @@ function drawFigure( type ) {
 
 }
 
-function configCanvas() {
+window.addEventListener("contextmenu", e => e.preventDefault());
 
-  type = document.getElementsByClassName("activeC")[0].id;
+function newab(offsetX, offsetY) {
 
-  switch(type){
-
-    case 'move':
-      for(i = 0; i < Figures.length; i++) {
-        if( Figures[i].Layer[X1][Y1] ){
-
-          move = false;
-          X1 = Figures[i].sp1[0]; X2 = Figures[i].sp2[0]; Y1 = Figures[i].sp1[1]; Y2 = Figures[0].sp2[1];
-          aux1 = X1;
-          aux2 = Y1;
-
-          if( Figures[i].type == "shapes" || Figures[i].type == "ellipse" ){
-            a = Figures[i].a;
-            b = Figures[i].b;
-          }
-
-          index = i;
-          console.log(Figures[index]);
-          i = Figures.length;
-
-          rContext.clearRect(0, 0, canvas.width, canvas.height);
-
-        }
-      }
-      break;
-
-    case 'color':
-
-      for(i = 0; i < Figures.length; i++) {
-        if( Figures[i].Layer[X1][Y1] ){
-          if( Figures[index].borderColor != borderColor.value ){
-            Figures[index].borderColor = borderColor.value;
-          }
-          redrawCanvas();
-        }
-      }
-      break;
-
+  if( X2 > offsetX ) {
+    a += X2 - offsetX;
+  }else if( X2 < offsetX ){
+    a -= offsetX - X2;
+  }
+  else if( Y2 > offsetY ) {
+    b += Y2 - offsetY;
+  }
+  else if( Y2 < offsetY ) {
+    b -= offsetY - Y2;
   }
 
 }
-
-window.addEventListener("contextmenu", e => e.preventDefault());
 
 //TOMA EL PRIMER VALOR PARA HACER UN PREVIEW
 canvas.addEventListener( "mousedown", function(event){
@@ -245,6 +97,7 @@ canvas.addEventListener( "mousedown", function(event){
   event.preventDefault();
   X1 = event.offsetX;
   Y1 = event.offsetY;
+  S = document.getElementsByClassName("input-btn")[0].value;
 
   if( event.button == 2  ){
 
@@ -280,10 +133,9 @@ canvas.addEventListener( "mousedown", function(event){
       draw = false;
     }
 
-    rContext.fillStyle = borderColor.value;
-    rContextpreview.fillStyle = borderColor.value;
-  
-  }
+      rContext.fillStyle = borderColor.value;
+      rContextpreview.fillStyle = borderColor.value;
+    }
   
 });
 
@@ -296,7 +148,7 @@ canvas.addEventListener( "mouseup", function( event ) {
     type = document.getElementsByClassName("activeS")[0].id;
 
     if ( X2 != undefined ) {
-      var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, slider.value, "0, 0, 0, 0",borderColor.value, new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
+      var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, S, slider.value, "0, 0, 0, 0",borderColor.value, new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) ) );
       Figures.push( prueba );
     }
   
@@ -308,17 +160,18 @@ canvas.addEventListener( "mouseup", function( event ) {
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
   }
-  else if( !move ){
+  else if( move ){
 
-    canvas.style.cursor = "default";
-    move = true;
+    move = false;
 
     Figures[index].sp1 = [X1, Y1];
     Figures[index].sp2 = [X2, Y2];
+    Figures[index].Layer = new Array(canvas.width).fill(false).map( () => new Array(canvas.height).fill(false) );
+
     drawFigure( Figures[index].type );
     console.log(Figures);
 
-    X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0;
+    X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
   }
@@ -333,17 +186,7 @@ canvas.addEventListener( "mousemove", function(event){
   
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
-    if( X2 > event.offsetX ) {
-      a += X2 - event.offsetX;
-    }else if( X2 < event.offsetX ){
-      a -= event.offsetX - X2;
-    }
-    else if( Y2 > event.offsetY ) {
-      b += Y2 - event.offsetY;
-    }
-    else if( Y2 < event.offsetY ) {
-      b -= event.offsetY - Y2;
-    }
+    newab(event.offsetX, event.offsetY);
 
     X2 = event.offsetX;
     Y2 = event.offsetY;
@@ -351,7 +194,7 @@ canvas.addEventListener( "mousemove", function(event){
     drawFigure( document.getElementsByClassName("activeS")[0].id );
 
   }
-  else if( !move ) {
+  else if( move ) {
 
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -375,18 +218,17 @@ canvas.addEventListener( "mousemove", function(event){
 function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
-    if( (draw && move) ){
+
+    if( index != undefined && (!move || !resize ) ){
+      Figures[index].Layer[x][y] = true;
+      rContext.fillRect(x,y,slider.value,slider.value);
+    }else if( draw && index == undefined ){
       Figures[Figures.length - 1].Layer[x][y] = true;
       rContext.fillRect(x,y,slider.value,slider.value);
     }
     else {
       rContextpreview.fillRect(x,y,slider.value,slider.value);
     }
-}
-
-function redrawPixel( x, y, L ){
-  rContext.fillStyle = Figures[L].borderColor;
-  rContext.fillRect(x, y, Figures[L].border, Figures[L].border);
 }
   
 function selectPixel(x, y, L){
