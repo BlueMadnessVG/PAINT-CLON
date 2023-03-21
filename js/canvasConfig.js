@@ -34,7 +34,7 @@ function redrawCanvas() {
   function menuDisplayNone() {
   
     menu.style.display = "none";
-    if( !move || !resize )
+    if( !move && !resize )
       index = undefined;
 
   }
@@ -71,11 +71,11 @@ function redrawCanvas() {
         case 'resize':
           
           resize = true;
+          console.log(index);
           X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
           a = Figures[index].a; b = Figures[index].b;
 
           rContext.clearRect(0, 0, canvas.width, canvas.height);
-;
           menuDisplayNone();
           break;
         case 'clear':
@@ -159,22 +159,8 @@ function redrawCanvas() {
       for(i = 0; i < Figures.length; i++) {
         if( Figures[i].Layer[X1][Y1] == 1 ){
           index = i;
-
-          if( Figures[index].type != 'line' ){
-            if( Figures[i].backgroundColor != backgroundColor.value ){
-              Figures[i].backgroundColor = backgroundColor.value;
-              rContext.fillStyle = Figures[index].backgroundColor;
-
-            }
-            floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
-            floodFillRecR( Figures[index].sp1[0] + 1, Figures[index].sp1[1] );
-            redrawCanvas();
-          }
-          else {
-            Figures[i].borderColor = borderColor.value;
-            redrawCanvas();
-          }
-          console.log(Figures);
+          drawBG();
+          i = Figures.length;
         }
       }
 
@@ -193,6 +179,40 @@ function redrawCanvas() {
   
     }
   
+  }
+
+  function drawBG() {
+
+    if( Figures[index].type != 'line' ){
+      if( (Figures[index].backgroundColor == "#ffff") ){
+        Figures[index].backgroundColor = backgroundColor.value;
+        rContext.fillStyle = Figures[index].backgroundColor;    
+
+        floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
+        floodFillRecR( Figures[index].sp1[0] + 1, Figures[index].sp1[1] );  
+      }
+      else{
+        Figures[index].backgroundColor = backgroundColor.value;
+        rContext.fillStyle = Figures[index].backgroundColor;
+        
+        redrawCanvas();  
+      }
+    }
+    else {
+      Figures[i].borderColor = borderColor.value;
+      redrawCanvas();
+    }
+  }
+
+  function redrawBG() {
+
+    if( Figures[index].type != 'line' ){
+      rContext.fillStyle = Figures[index].backgroundColor;    
+
+      floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
+      floodFillRecR( Figures[index].sp1[0] + 1, Figures[index].sp1[1] );
+    }
+
   }
 
   function floodFillRecL(x, y){

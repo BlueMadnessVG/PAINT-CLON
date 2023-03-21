@@ -108,7 +108,7 @@ canvas.addEventListener( "mousedown", function(event){
   if( event.button == 2  ){
 
     for(i = 0; i < Figures.length; i++) {
-      if( Figures[i].Layer[X1][Y1] ){
+      if( Figures[i].Layer[X1][Y1] == 1 || Figures[i].Layer[X1][Y1] == 2 ){
 
         menu.style.display = "flex";
         menu.style.left = event.clientX + "px";
@@ -177,6 +177,7 @@ canvas.addEventListener( "mouseup", function( event ) {
     Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
 
     drawFigure( Figures[index].type );
+    redrawBG();
     console.log(Figures);
 
     X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
@@ -188,20 +189,20 @@ canvas.addEventListener( "mouseup", function( event ) {
   }
   else if( resize ){
 
-    resize = false;
-
     Figures[index].a = a;
     Figures[index].b = b;
     Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
 
+    resize = false;
+
     drawFigure( Figures[index].type );
+    redrawBG();
     console.log(Figures);
 
     X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
     
     rContext.clearRect(0, 0, canvas.width, canvas.height);
     rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
-
     redrawCanvas();
 
   }
@@ -264,15 +265,30 @@ canvas.addEventListener( "mousemove", function(event){
 
 } );
 
+function savePixel(x, y, figure){
+
+  if( slider.value == 1 ){
+    figure.Layer[x][y] = 1;
+  }
+  else{
+    for( NX = 0; NX < slider.value; NX++ ){
+      for( NY = 0; NY < slider.value; NY++ ){
+        figure.Layer[x + NX][y + NY] = 1;
+      }
+    }
+  }
+
+}
+
 function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
 
     if( index != undefined && (!move && !resize ) ){
-      Figures[index].Layer[x][y] = 1;
+      savePixel(x, y, Figures[index]);
       rContext.fillRect(x,y,slider.value,slider.value);
     }else if( draw && index == undefined ){
-      Figures[Figures.length - 1].Layer[x][y] = 1;
+      savePixel(x, y, Figures[Figures.length - 1]);
       rContext.fillRect(x,y,slider.value,slider.value);
     }
     else {
