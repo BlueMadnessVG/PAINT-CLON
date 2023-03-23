@@ -31,10 +31,40 @@ function redrawCanvas() {
   
   }
   
+  buttons.forEach(btn => {
+    btn.addEventListener("click", function(event) {
+  
+      buttons.forEach(btnClass => {
+        btnClass.classList.remove("activeS");
+      });
+      configButtons.forEach(btnClass => {
+        btnClass.classList.remove("activeC");
+      });
+    
+      btn.classList.add("activeS");
+  
+    });
+  })
+  
+  configButtons.forEach(btns => {
+    btns.addEventListener("click", function(event) {
+  
+      buttons.forEach(btnClass => {
+        btnClass.classList.remove("activeS");
+      });
+      configButtons.forEach(btnClass => {
+        btnClass.classList.remove("activeC");
+      });
+    
+      btns.classList.add("activeC");
+  
+    });
+  })
+
   function menuDisplayNone() {
   
     menu.style.display = "none";
-    if( !move && !resize )
+    if( !move && !resize && !rotate )
       index = undefined;
 
   }
@@ -78,6 +108,16 @@ function redrawCanvas() {
           rContext.clearRect(0, 0, canvas.width, canvas.height);
           menuDisplayNone();
           break;
+        case 'rotate':
+
+          console.log(Figures[index]);
+          rotate = true;
+          X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+
+          rContext.clearRect(0, 0, canvas.width, canvas.height);
+          menuDisplayNone();
+          
+          break;
         case 'clear':
   
           Figures.splice(index, 1);
@@ -90,36 +130,6 @@ function redrawCanvas() {
   
           break;
       }
-  
-    });
-  })
-  
-  buttons.forEach(btn => {
-    btn.addEventListener("click", function(event) {
-  
-      buttons.forEach(btnClass => {
-        btnClass.classList.remove("activeS");
-      });
-      configButtons.forEach(btnClass => {
-        btnClass.classList.remove("activeC");
-      });
-    
-      btn.classList.add("activeS");
-  
-    });
-  })
-  
-  configButtons.forEach(btns => {
-    btns.addEventListener("click", function(event) {
-  
-      buttons.forEach(btnClass => {
-        btnClass.classList.remove("activeS");
-      });
-      configButtons.forEach(btnClass => {
-        btnClass.classList.remove("activeC");
-      });
-    
-      btns.classList.add("activeC");
   
     });
   })

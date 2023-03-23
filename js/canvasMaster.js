@@ -45,6 +45,7 @@ var draw = true;
 var move = false;
 var resize = false;
 var fill = false;
+var rotate = false;
 var index;
 var X1, X2, Y1, Y2, aux1, aux2;
 
@@ -135,7 +136,7 @@ canvas.addEventListener( "mousedown", function(event){
     if( document.getElementsByClassName("activeC")[0] != undefined ){
       configCanvas();
     }
-    else if( !resize ){
+    else if( !resize && !rotate ){
       draw = false;
     }
 
@@ -206,6 +207,12 @@ canvas.addEventListener( "mouseup", function( event ) {
     redrawCanvas();
 
   }
+  else if ( rotate ){
+
+    console.log(index);
+    rotate = false;
+
+  }
 
 
 });
@@ -262,6 +269,31 @@ canvas.addEventListener( "mousemove", function(event){
 
     }
   }
+  else if( rotate ) {
+
+    aux1 = event.offsetX;
+    aux2 = event.offsetY;
+
+    x_medio = (X1 + X2) / 2
+    y_medio = (Y1 + Y2) / 2
+
+    var dx = aux1 - X1;
+    var dy = aux2 - Y1;
+
+    var theta = Math.atan2(dy, dx);
+    theta = ( theta * Math.PI ) / 180;
+
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+
+    X2 = Math.floor( X1 + (( ( X2 - X1) * cos ) - ( ( Y2 - Y1) * sin )) );
+    Y2 = Math.floor( Y1 + (( ( X2 - X1) * sin ) + ( ( Y2 - Y1) * cos )) );
+ 
+    console.log( X2 + " " + Y2 );
+
+    drawFigure( Figures[index].type );
+
+  }
 
 } );
 
@@ -284,7 +316,7 @@ function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
 
-    if( index != undefined && (!move && !resize ) ){
+    if( index != undefined && (!move && !resize & !rotate ) ){
       savePixel(x, y, Figures[index]);
       rContext.fillRect(x,y,slider.value,slider.value);
     }else if( draw && index == undefined ){
