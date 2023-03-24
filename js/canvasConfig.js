@@ -114,6 +114,9 @@ function redrawCanvas() {
           rotate = true;
           X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
 
+          x_medio = (X1 + X2) / 2;
+          y_medio = (Y1 + Y2) / 2;
+
           rContext.clearRect(0, 0, canvas.width, canvas.height);
           menuDisplayNone();
           

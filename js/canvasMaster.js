@@ -48,7 +48,7 @@ var fill = false;
 var rotate = false;
 var index;
 var X1, X2, Y1, Y2, aux1, aux2;
-
+var x_medio, y_medio;
 
 function drawFigure( type ) {
 
@@ -274,28 +274,66 @@ canvas.addEventListener( "mousemove", function(event){
     aux1 = event.offsetX;
     aux2 = event.offsetY;
 
-    x_medio = (X1 + X2) / 2
-    y_medio = (Y1 + Y2) / 2
-
-    var dx = aux1 - X1;
-    var dy = aux2 - Y1;
+    var dx = aux1 - x_medio;
+    var dy = aux2 - y_medio;
 
     var theta = Math.atan2(dy, dx);
-    theta = ( theta * Math.PI ) / 180;
+    theta *= 180 / Math.PI;
+    console.log( theta );
 
-    var sin = Math.sin(theta);
-    var cos = Math.cos(theta);
+    var sin = Math.sin( 45 );
+    var cos = Math.cos( 45 );
 
-    X2 = Math.floor( X1 + (( ( X2 - X1) * cos ) - ( ( Y2 - Y1) * sin )) );
-    Y2 = Math.floor( Y1 + (( ( X2 - X1) * sin ) + ( ( Y2 - Y1) * cos )) );
+    var tra = [ [ 1 , 0 , -( 4 ) ],
+                [ 0 , 1 , -( 3 ) ], 
+                [ 0 , 0 ,  1  ] ];           
+
+    var nrm = [ [ cos, -sin, 0 ],
+                [ sin,  cos, 0 ],
+                [  0 ,   0 , 1 ] ];
+
+    var trab = [ [ 1 , 0 , 4 ],
+                 [ 0 , 1 , 3 ], 
+                 [ 0 , 0 ,  1  ] ]; 
+    
+    var inp = [ 6, 5, 1 ];
+
+    var result = Array(tra.length).fill().map(() => Array(nrm[0].length).fill(0));
+
+    inp = matrixVectorMultiply( tra, inp );
+    inp = matrixVectorMultiply( nrm, inp );
+    inp = matrixVectorMultiply( trab, inp );
+
+    console.log( inp );
+
+    X2 = (( X2 * cos ) - ( Y2 * sin )) + x_medio;
+    Y2 = (( X2 * sin ) + ( Y2 * cos )) + y_medio;
+
+    console.log( X2 + "   " + Y2 );
  
-    console.log( X2 + " " + Y2 );
-
     drawFigure( Figures[index].type );
 
   }
 
 } );
+
+function matrixVectorMultiply(matrix, vector) {
+  // Get the number of rows and columns in the matrix
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+
+  // Make sure the dimensions of the matrix and vector are compatible
+  if (numCols !== vector.length) {
+    throw new Error('Matrix and vector dimensions are not compatible');
+  }
+
+  // Multiply the matrix by the vector
+  const result = matrix.map((row) =>
+    row.reduce((sum, value, index) => sum + value * vector[index], 0)
+  );
+
+  return result;
+}
 
 function savePixel(x, y, figure){
 
