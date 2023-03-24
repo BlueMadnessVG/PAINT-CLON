@@ -46,9 +46,11 @@ var move = false;
 var resize = false;
 var fill = false;
 var rotate = false;
+var f_rotate = false;
 var index;
 var X1, X2, Y1, Y2, aux1, aux2;
 var x_medio, y_medio;
+var pointsMatrix;
 
 function drawFigure( type ) {
 
@@ -100,7 +102,7 @@ canvas.addEventListener( "mousedown", function(event){
   redrawCanvas();
 
   event.preventDefault();
-  if ( !resize ){
+  if ( !resize && !rotate ){
     X1 = event.offsetX;
     Y1 = event.offsetY;
   }
@@ -192,6 +194,8 @@ canvas.addEventListener( "mouseup", function( event ) {
 
     Figures[index].a = a;
     Figures[index].b = b;
+    Figures[index].sp2[0] = X2;
+    Figures[index].sp2[1] = Y2;
     Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
 
     resize = false;
@@ -209,8 +213,31 @@ canvas.addEventListener( "mouseup", function( event ) {
   }
   else if ( rotate ){
 
-    console.log(index);
+    Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
+
+    if( Figures[index].type == "line" ){
+
+      newp = pixelRotation( X1, Y1 );
+      Figures[index].sp1 = newp;
+      newp = pixelRotation( X2, Y2 );
+      Figures[index].sp2 = newp;
+
+      X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+
+    }
+    else {
+      f_rotate = true;
+    }
+
     rotate = false;
+    drawFigure( Figures[index].type );
+    f_rotate = false;
+
+    X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
+
+    rContext.clearRect(0, 0, canvas.width, canvas.height);
+    rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
+    redrawCanvas();
 
   }
 
@@ -279,37 +306,24 @@ canvas.addEventListener( "mousemove", function(event){
 
     var theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI;
-    console.log( theta );
 
-    var sin = Math.sin( 45 );
-    var cos = Math.cos( 45 );
+    var sin = Math.sin( theta );
+    var cos = Math.cos( theta );
 
-    var tra = [ [ 1 , 0 , -( 4 ) ],
-                [ 0 , 1 , -( 3 ) ], 
-                [ 0 , 0 ,  1  ] ];           
+    var trab = [ [ 1 , 0 , x_medio ],
+                 [ 0 , 1 , y_medio ], 
+                 [ 0 , 0 ,  1  ] ]; 
 
     var nrm = [ [ cos, -sin, 0 ],
                 [ sin,  cos, 0 ],
                 [  0 ,   0 , 1 ] ];
 
-    var trab = [ [ 1 , 0 , 4 ],
-                 [ 0 , 1 , 3 ], 
-                 [ 0 , 0 ,  1  ] ]; 
-    
-    var inp = [ 6, 5, 1 ];
+    var tra = [ [ 1 , 0 , -( x_medio ) ],
+                [ 0 , 1 , -( y_medio ) ], 
+                [ 0 , 0 ,  1  ] ];           
 
-    var result = Array(tra.length).fill().map(() => Array(nrm[0].length).fill(0));
-
-    inp = matrixVectorMultiply( tra, inp );
-    inp = matrixVectorMultiply( nrm, inp );
-    inp = matrixVectorMultiply( trab, inp );
-
-    console.log( inp );
-
-    X2 = (( X2 * cos ) - ( Y2 * sin )) + x_medio;
-    Y2 = (( X2 * sin ) + ( Y2 * cos )) + y_medio;
-
-    console.log( X2 + "   " + Y2 );
+    pointsMatrix = multiplyMatrices( trab, nrm );
+    pointsMatrix = multiplyMatrices( pointsMatrix, tra );
  
     drawFigure( Figures[index].type );
 
@@ -335,6 +349,30 @@ function matrixVectorMultiply(matrix, vector) {
   return result;
 }
 
+// Define a function to multiply two matrices
+function multiplyMatrices(matrix1, matrix2) {
+  const result = [];
+
+  // Iterate over the rows of the first matrix
+  for (let i = 0; i < matrix1.length; i++) {
+    result[i] = [];
+
+    // Iterate over the columns of the second matrix
+    for (let j = 0; j < matrix2[0].length; j++) {
+      let sum = 0;
+
+      // Iterate over the columns of the first matrix and the rows of the second matrix
+      for (let k = 0; k < matrix1[0].length; k++) {
+        sum += matrix1[i][k] * matrix2[k][j];
+      }
+
+      result[i][j] = sum;
+    }
+  }
+
+  return result;
+}
+
 function savePixel(x, y, figure){
 
   if( slider.value == 1 ){
@@ -350,19 +388,37 @@ function savePixel(x, y, figure){
 
 }
 
+function pixelRotation( x, y ){
+
+  if( rotate || f_rotate ){
+
+    var inp = [ x, y, 1 ];
+    inp = matrixVectorMultiply( pointsMatrix, inp );
+    
+    return [ inp[0], inp[1] ];
+  }
+  else {
+    return [ x, y ];
+  }
+
+}
+
 function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
 
-    if( index != undefined && (!move && !resize & !rotate ) ){
-      savePixel(x, y, Figures[index]);
-      rContext.fillRect(x,y,slider.value,slider.value);
+    if( index != undefined && (!move && !resize && !rotate ) ){
+      newp = pixelRotation( x, y );
+      savePixel(Math.floor(newp[0]),Math.floor(newp[1]), Figures[index]);
+      rContext.fillRect(newp[0],newp[1],Figures[index].border,Figures[index].border);
     }else if( draw && index == undefined ){
-      savePixel(x, y, Figures[Figures.length - 1]);
-      rContext.fillRect(x,y,slider.value,slider.value);
+      newp = pixelRotation( x, y );
+      savePixel(newp[0],newp[1], Figures[Figures.length - 1]);
+      rContext.fillRect(newp[0],newp[1],Figures[Figures.length - 1].border,Figures[Figures.length - 1].border);
     }
     else {
-      rContextpreview.fillRect(x,y,slider.value,slider.value);
+      newp = pixelRotation( x, y );
+      rContextpreview.fillRect(newp[0],newp[1],slider.value,slider.value);
     }
 }
   

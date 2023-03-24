@@ -1,7 +1,7 @@
 function redrawCanvas() {
 
     for(i = 0; i < Figures.length; i++) {
-      if( !move || !resize ){
+      if( index == undefined ){
         for( y = 0; y < canvas.height; y++ ){
           for( x = 0; x < canvas.width; x++ ){
             if ( Figures[i].Layer[x][y] == 1 ){
@@ -12,7 +12,6 @@ function redrawCanvas() {
             }
           }
         }
-  
       }
       else if( index != i ){
         for( y = 0; y < canvas.height; y++ ){
@@ -82,9 +81,9 @@ function redrawCanvas() {
         case 'moveUp':
           if( index != Figures.length - 1 ){
             moveFigure(index + 1);
-            index = undefined;
-            redrawCanvas();
           }
+          index = undefined;
+          redrawCanvas();
           menuDisplayNone();
   
           break;
@@ -92,9 +91,9 @@ function redrawCanvas() {
   
           if( index != 0 ){
             moveFigure(index - 1);
-            index = undefined;
-            redrawCanvas();
           }
+          index = undefined;
+          redrawCanvas();
           menuDisplayNone();
   
           break;
@@ -106,6 +105,7 @@ function redrawCanvas() {
           a = Figures[index].a; b = Figures[index].b;
 
           rContext.clearRect(0, 0, canvas.width, canvas.height);
+          redrawCanvas();
           menuDisplayNone();
           break;
         case 'rotate':
@@ -114,10 +114,18 @@ function redrawCanvas() {
           rotate = true;
           X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
 
-          x_medio = (X1 + X2) / 2;
-          y_medio = (Y1 + Y2) / 2;
+          if( Figures[index].type == "line" ){
+            x_medio = (X1 + X2) / 2;
+            y_medio = (Y1 + Y2) / 2;  
+          } else {
+            x_medio = X1;
+            y_medio = Y1;
+
+            a = Figures[index].a; b = Figures[index].b;
+          }
 
           rContext.clearRect(0, 0, canvas.width, canvas.height);
+          redrawCanvas();
           menuDisplayNone();
           
           break;
@@ -170,7 +178,7 @@ function redrawCanvas() {
     case 'bucket':
 
       for(i = 0; i < Figures.length; i++) {
-        if( Figures[i].Layer[X1][Y1] == 1 ){
+        if( Figures[i].Layer[X1][Y1] == 1 || Figures[i].Layer[X1][Y1] == 2 ){
           index = i;
           drawBG();
           i = Figures.length;
@@ -207,12 +215,12 @@ function redrawCanvas() {
       else{
         Figures[index].backgroundColor = backgroundColor.value;
         rContext.fillStyle = Figures[index].backgroundColor;
-        
+        index = undefined;
         redrawCanvas();  
       }
     }
     else {
-      Figures[i].borderColor = borderColor.value;
+      Figures[index].borderColor = backgroundColor.value;
       redrawCanvas();
     }
   }
