@@ -376,12 +376,15 @@ function multiplyMatrices(matrix1, matrix2) {
 function savePixel(x, y, figure){
 
   if( slider.value == 1 ){
-    figure.Layer[x][y] = 1;
+    if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+      figure.Layer[x][y] = 1;
   }
   else{
     for( NX = 0; NX < slider.value; NX++ ){
       for( NY = 0; NY < slider.value; NY++ ){
-        figure.Layer[x + NX][y + NY] = 1;
+            if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) ){
+              figure.Layer[x][y] = 1;
+            }
       }
     }
   }
@@ -410,15 +413,18 @@ function drawpix(x,y){
     if( index != undefined && (!move && !resize && !rotate ) ){
       newp = pixelRotation( x, y );
       savePixel(Math.floor(newp[0]),Math.floor(newp[1]), Figures[index]);
-      rContext.fillRect(newp[0],newp[1],Figures[index].border,Figures[index].border);
+      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+        rContext.fillRect(newp[0],newp[1],Figures[index].border,Figures[index].border);
     }else if( draw && index == undefined ){
       newp = pixelRotation( x, y );
       savePixel(newp[0],newp[1], Figures[Figures.length - 1]);
-      rContext.fillRect(newp[0],newp[1],Figures[Figures.length - 1].border,Figures[Figures.length - 1].border);
+      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+        rContext.fillRect(newp[0],newp[1],Figures[Figures.length - 1].border,Figures[Figures.length - 1].border);
     }
     else {
       newp = pixelRotation( x, y );
-      rContextpreview.fillRect(newp[0],newp[1],slider.value,slider.value);
+      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+        rContextpreview.fillRect(newp[0],newp[1],slider.value,slider.value);
     }
 }
   

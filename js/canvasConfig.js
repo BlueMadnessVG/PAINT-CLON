@@ -156,6 +156,8 @@ function redrawCanvas() {
           if( Figures[i].Layer[X1][Y1] == 1 || Figures[i].Layer[X1][Y1] == 2 ){
   
             move = true;
+            
+
             X1 = Figures[i].sp1[0]; X2 = Figures[i].sp2[0]; Y1 = Figures[i].sp1[1]; Y2 = Figures[i].sp2[1];
             aux1 = X1;
             aux2 = Y1;
@@ -227,7 +229,7 @@ function redrawCanvas() {
 
   function redrawBG() {
 
-    if( Figures[index].type != 'line' ){
+    if( Figures[index].type != 'line' && Figures[index].backgroundColor != "#ffff" ){
       rContext.fillStyle = Figures[index].backgroundColor;    
 
       floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
@@ -238,7 +240,7 @@ function redrawCanvas() {
 
   function floodFillRecL(x, y){
 
-    if( (x < 0 && x > canvas.width) && (y < 0 || y > canvas.height)) return;
+    if( (x < 0 || x > canvas.width) || (y < 0 || y > canvas.height)) return;
     if( Figures[index].Layer[x][y] == 1 || Figures[index].Layer[x][y] == 2 ) return; 
 
     Figures[index].Layer[x][y] = 2;
@@ -252,7 +254,7 @@ function redrawCanvas() {
 
   function floodFillRecR(x, y){
 
-    if( (x < 0 && x > canvas.width) && (y < 0 || y > canvas.height)) return;
+    if( (x < 0 || x > canvas.width) || (y < 0 || y > canvas.height)) return;
     if( Figures[index].Layer[x][y] == 1 || Figures[index].Layer[x][y] == 2 ) return; 
 
     Figures[index].Layer[x][y] = 2;
