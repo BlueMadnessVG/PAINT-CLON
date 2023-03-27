@@ -2,8 +2,6 @@ var canvas = document.getElementById("canvas");
 const rContext = canvas.getContext("2d");
 var canvaspreview = document.getElementById("canvas-preview");
 const rContextpreview = canvaspreview.getContext("2d");
-var btnCanvas = document.getElementById("canvas-btn");
-const btnContext = canvaspreview.getContext("2d");
 
 const buttons = document.querySelectorAll(".shapes");
 const configButtons = document.querySelectorAll(".config");
@@ -12,6 +10,16 @@ const menuButtons = document.querySelectorAll(".menu-btn");
 var slider = document.getElementById("myRange");
 var output = document.getElementById("border");
 var menu = document.getElementById("menu");
+
+var clear = document.getElementById("clear");
+var save = document.getElementById("save-modal");
+var modal = document.getElementsByClassName("save-menu")[0];
+var span = document.getElementsByClassName("close")[0];
+
+var savePNG = document.getElementsByClassName("save-img")[0];
+var saveCanvas = document.getElementById("save");
+var restoreCanvas = document.getElementById("restore");
+var inputFile = document.getElementById("selecFile");
 
 output.innerHTML = slider.value;
 
@@ -51,6 +59,153 @@ var index;
 var X1, X2, Y1, Y2, aux1, aux2;
 var x_medio, y_medio;
 var pointsMatrix;
+
+save.onclick = function() {
+
+  modal.style.display = "block";
+
+}
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+savePNG.onclick = function( event ) {
+
+  canvas.style.backgroundColor = "white";
+  var dataURL = canvas.toDataURL();
+
+  var link = document.createElement("a");
+  link.href = dataURL;
+  link.download = "myImage.png";
+
+  link.click();
+  link.remove();
+
+  modal.style.display = "none";
+
+}
+
+saveCanvas.onclick = function( event ) {
+
+  var text = "";
+  Figures.forEach( function( Figure ) {
+    text +=  Figure.type + "/" + "" + Figure.sp1[0] + "/" + Figure.sp1[1] + "/" + Figure.sp2[0] + "/" + Figure.sp2[1] + "/" + Figure.a + "/" + Figure.b + "/" +
+             Figure.n + "/" + Figure.border + "/" + Figure.backgroundColor + "/" + Figure.borderColor + "\n";
+  } );
+
+  console.log("Text to save:", text);
+
+  var blob = new Blob( [text], {type: "text/plain;charset=utf-8"} );
+  var url = URL.createObjectURL(blob);
+
+  var link = document.createElement("a");
+  link.href = url;
+  link.download = "myVector.paint";
+
+  document.body.appendChild(link);
+  link.click();
+
+}
+
+restoreCanvas.onclick = function( event ) {
+  rContext.clearRect(0, 0, canvas.width, canvas.height);
+  inputFile.click();
+}
+
+function parseCsv(csvString) {
+  var parsedData = Papa.parse(csvString, {
+    header: true,
+    dynamicTyping: true
+  });
+  return parsedData.data;
+}
+
+inputFile.addEventListener( "change", function( event ) {
+
+  Figures.splice(0, Figures.length);
+
+  var file = this.files[0];
+  var reader = new FileReader();
+  reader.onload = function() {
+    var data = reader.result;
+
+    data.split("\n").forEach( function( line ) {
+
+      var parts = line.split("/");
+
+      if( parts[0] != "" ) {
+        var dataRestored = new struct( parts[0], [parseInt(parts[1]) , parseInt(parts[2]) ], [parseInt(parts[3]) , parseInt(parts[4]) ], parseInt(parts[5]), parseInt(parts[6]), parts[7], parts[8], parts[9], parts[10], new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) ) );
+        Figures.push( dataRestored );
+
+        index =  Figures.length - 1;
+        X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; 
+        Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+
+        if( Figures[index].type == "shapes" || Figures[index].type == "ellipse" ){
+          a = Figures[index].a;
+          b = Figures[index].b;
+        }
+
+        rContext.fillStyle = Figures[index].borderColor;
+        drawFigure( Figures[index].type );
+        redrawBG( Figures[index].type );
+        X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
+      }
+
+    } );
+    
+  };
+
+  reader.readAsText(file);
+  console.log(Figures);
+  span.click();
+
+} );
+
+
+
+clear.addEventListener( "click", function( event ){
+
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  })
+  
+  swalWithBootstrapButtons.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      Figures.splice(0, Figures.length);
+      rContext.clearRect(0, 0, canvas.width, canvas.height);
+    
+      console.log( Figures );
+
+      swalWithBootstrapButtons.fire(
+        'Deleted!',
+        'Your file has been deleted.',
+        'success'
+      )
+    }
+  })
+
+} );
 
 function drawFigure( type ) {
 
@@ -158,9 +313,8 @@ canvas.addEventListener( "mouseup", function( event ) {
     type = document.getElementsByClassName("activeS")[0].id;
 
     if ( X2 != undefined ) {
-      var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, S, slider.value, "#ffff", borderColor.value, new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) ) );
+      var prueba = new struct( type, [X1,Y1], [X2,Y2], a, b, S, slider.value, "", borderColor.value, new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) ) );
       Figures.push( prueba );
-      console.log(Figures);
     }
   
     drawFigure( type );
@@ -373,17 +527,17 @@ function multiplyMatrices(matrix1, matrix2) {
   return result;
 }
 
-function savePixel(x, y, figure){
+function savePixel(x, y, figure, S){
 
-  if( slider.value == 1 ){
-    if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+  if( S == 1 ){
+    if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
       figure.Layer[x][y] = 1;
   }
   else{
-    for( NX = 0; NX < slider.value; NX++ ){
-      for( NY = 0; NY < slider.value; NY++ ){
-            if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) ){
-              figure.Layer[x][y] = 1;
+    for( NX = 0; NX < S; NX++ ){
+      for( NY = 0; NY < S; NY++ ){
+            if( ( x + NX >= 0 && x + NX < canvas.width ) && ( y + NY >= 0 && y < canvas.height ) ){
+              figure.Layer[x + NX][y + NY] = 1;
             }
       }
     }
@@ -412,23 +566,23 @@ function drawpix(x,y){
 
     if( index != undefined && (!move && !resize && !rotate ) ){
       newp = pixelRotation( x, y );
-      savePixel(Math.floor(newp[0]),Math.floor(newp[1]), Figures[index]);
-      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+      savePixel(Math.floor(newp[0]),Math.floor(newp[1]), Figures[index], Figures[index].border);
+      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
         rContext.fillRect(newp[0],newp[1],Figures[index].border,Figures[index].border);
     }else if( draw && index == undefined ){
       newp = pixelRotation( x, y );
-      savePixel(newp[0],newp[1], Figures[Figures.length - 1]);
-      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+      savePixel(newp[0],newp[1], Figures[Figures.length - 1], Figures[Figures.length - 1].border);
+      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
         rContext.fillRect(newp[0],newp[1],Figures[Figures.length - 1].border,Figures[Figures.length - 1].border);
     }
     else {
       newp = pixelRotation( x, y );
-      if( ( x >= 0 && x < 800 ) && ( y >= 0 && y < 800 ) )
+      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
         rContextpreview.fillRect(newp[0],newp[1],slider.value,slider.value);
     }
 }
   
-function selectPixel(x, y, L){
-    rContext.fillStyle = "rgba(63,81,181,255)";
-    rContext.fillRect(x,y, Figures[L].border, Figures[L].border);
+function selectPixel(x, y){
+    rContext.fillStyle = "rgba(63,81,181, 255)";
+    rContext.fillRect(x,y, 1, 1);
 }

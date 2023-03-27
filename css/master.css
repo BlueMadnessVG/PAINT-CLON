@@ -1,5 +1,8 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 
+body {
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+}
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -40,6 +43,10 @@ hr.line {
     display: flex;
     flex-direction: column;
     background-color: rgba(63,81,181,255);
+
+    border-right: 1px solid white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    z-index: 4;
 
 }
 
@@ -135,15 +142,19 @@ hr.line {
 #canvas-div {
 
     width: 100%;
+    padding: 1rem;
+    background-color: rgba(229,229,229,255);
 
 }
 
 #canvas {
     position: fixed;
-    z-index: 0;
+    z-index: 1;
 }
 #canvas-preview {
-    z-index: 1;
+    z-index: 2;
+    background-color: white;
+    border-radius: 1rem;
 }
 
 .slider {
@@ -238,4 +249,110 @@ hr.line {
 
     margin-right: 5px;
 
+  }
+
+  .save-menu{
+
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+
+  }
+
+  .content {
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    border-radius: 1rem;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+
+  }
+
+  .close {
+    color: #aaa;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .save-img{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
+    border: none;
+    border-radius: 1rem;
+
+    padding: 1rem;
+
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+
+    color: rgba(63,81,181,255);
+    background-color: white;
+    border: 1px solid rgba(63,81,181,255);
+    font-size: 1.5rem;
+    font-weight: 600;
+
+    transition: all 200ms;
+
+  }
+
+  .save-img i{
+
+    font-size: 180px;
+
+  }
+
+  .save-img:hover,
+  .save-img:focus {
+    color: white;
+    background-color: rgba(63,81,181,255);
+    
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .save-file {
+
+    background-color: rgba(63,81,181,255);
+    color: white;
+    font-size: 0.9rem;
+
+    padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+    width: 49%;
+
+    border: none;
+    border-radius: 0.4rem;
+
+  }
+
+  .save-file:hover,
+  .save-file:focus {
+    color: rgba(63,81,181,255);
+    border: 1px solid rgba(63,81,181,255);
+    background-color: white;
+    
+    text-decoration: none;
+    cursor: pointer;
   }

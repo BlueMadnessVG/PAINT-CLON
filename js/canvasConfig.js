@@ -207,7 +207,7 @@ function redrawCanvas() {
   function drawBG() {
 
     if( Figures[index].type != 'line' ){
-      if( (Figures[index].backgroundColor == "#ffff") ){
+      if( (Figures[index].backgroundColor == "") ){
         Figures[index].backgroundColor = backgroundColor.value;
         rContext.fillStyle = Figures[index].backgroundColor;    
 
@@ -229,7 +229,7 @@ function redrawCanvas() {
 
   function redrawBG() {
 
-    if( Figures[index].type != 'line' && Figures[index].backgroundColor != "#ffff" ){
+    if( Figures[index].type != 'line' && Figures[index].backgroundColor != "" ){
       rContext.fillStyle = Figures[index].backgroundColor;    
 
       floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
@@ -268,11 +268,11 @@ function redrawCanvas() {
 
   function redrawPixel( x, y, L ){
     rContext.fillStyle = Figures[L].borderColor;
-    rContext.fillRect(x, y, Figures[L].border, Figures[L].border);
+    rContext.fillRect(x, y, 1, 1);
   }
   
   function redrawPixelBG( x, y, L ){
     rContext.fillStyle = Figures[L].backgroundColor;
-    rContext.fillRect(x, y, Figures[L].border, Figures[L].border);
+    rContext.fillRect(x, y, 1, 1);
   }
     
