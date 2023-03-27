@@ -129,6 +129,28 @@ function redrawCanvas() {
           menuDisplayNone();
           
           break;
+        case 'deleteBack':
+
+          console.log(Figures[index]);
+          Figures[index].backgroundColor = "";
+
+          if( Figures[index].type != "line" ){
+
+            Figures[index].backgroundColor = "";
+
+            X1 = Figures[index].sp1[0]; Y1 = Figures[index].sp1[1];
+            a = Figures[index].a;
+            b = Figures[index].b;
+            Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
+          
+            drawFigure( Figures[index].type );
+          }
+
+          rContext.clearRect(0, 0, canvas.width, canvas.height);
+          menuDisplayNone();
+          redrawCanvas();
+
+          break;
         case 'clear':
   
           Figures.splice(index, 1);
@@ -240,7 +262,7 @@ function redrawCanvas() {
 
   function floodFillRecL(x, y){
 
-    if( (x < 0 || x > canvas.width) || (y < 0 || y > canvas.height)) return;
+    if( (x < 0 || x > canvas.width - 1) || (y < 0 || y > canvas.height - 1)) return;
     if( Figures[index].Layer[x][y] == 1 || Figures[index].Layer[x][y] == 2 ) return; 
 
     Figures[index].Layer[x][y] = 2;
@@ -254,7 +276,7 @@ function redrawCanvas() {
 
   function floodFillRecR(x, y){
 
-    if( (x < 0 || x > canvas.width) || (y < 0 || y > canvas.height)) return;
+    if( (x < 0 || x > canvas.width - 1) || (y < 0 || y > canvas.height - 1)) return;
     if( Figures[index].Layer[x][y] == 1 || Figures[index].Layer[x][y] == 2 ) return; 
 
     Figures[index].Layer[x][y] = 2;

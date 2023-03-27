@@ -290,7 +290,7 @@ canvas.addEventListener( "mousedown", function(event){
   }
   else {
 
-    if( document.getElementsByClassName("activeC")[0] != undefined ){
+    if( (document.getElementsByClassName("activeC")[0] != undefined) && ( !move && !resize && !rotate ) ){
       configCanvas();
     }
     else if( !resize && !rotate ){
@@ -385,6 +385,7 @@ canvas.addEventListener( "mouseup", function( event ) {
 
     rotate = false;
     drawFigure( Figures[index].type );
+    redrawBG();
     f_rotate = false;
 
     X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
