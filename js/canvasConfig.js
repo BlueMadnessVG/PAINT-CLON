@@ -225,6 +225,11 @@ function redrawCanvas() {
       pen = true;
 
       break;
+    case 'eraser':
+
+      eraser = true;
+
+      break;
     case 'color':
       for(i = 0; i < Figures.length; i++) {
         if( Figures[i].Layer[X1][Y1] == 1 ){

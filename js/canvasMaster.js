@@ -57,6 +57,7 @@ var resize = false;
 var fill = false;
 var rotate = false;
 var f_rotate = false;
+var eraser = false;
 var index;
 var X1, X2, Y1, Y2, aux1, aux2;
 var x_medio, y_medio;
@@ -292,10 +293,10 @@ canvas.addEventListener( "mousedown", function(event){
   }
   else {
 
-    if( (document.getElementsByClassName("activeC")[0] != undefined) && ( !move && !resize && !rotate && !pen ) ){
+    if( (document.getElementsByClassName("activeC")[0] != undefined) && ( !move && !resize && !rotate && !pen && !eraser ) ){
       configCanvas();
     }
-    else if( !resize && !rotate && !pen ){
+    else if( !resize && !rotate && !pen && !eraser ){
       draw = false;
     }
 
@@ -409,6 +410,11 @@ canvas.addEventListener( "mouseup", function( event ) {
     pen = false;
 
   }
+  else if ( eraser ) {
+
+    eraser = false;
+
+  }
 
 
 });
@@ -440,6 +446,27 @@ canvas.addEventListener( "mousemove", function(event){
           penCanvas[ x + NX ][ y + NY ] = 1;
           drawpix( x + NX, y + NY );
         }
+
+  }
+  else if ( eraser ) {
+
+    x = event.offsetX;
+    y = event.offsetY;
+
+    for(i = 0; i < Figures.length; i++) {
+      if( Figures[i].Layer[x][y] == 1 && Figures[i].type == "pen" ){
+
+        console.log( Figures[i].Layer[ x ][ y ] );
+        for( NX = 0; NX < slider.value; NX++ )
+          for( NY = 0; NY < slider.value; NY++ )
+            if( ( x + NX >= 0 && x + NX < canvas.width ) && ( y + NY >= 0 && y < canvas.height ) )
+              Figures[i].Layer[ x + NX ][ y + NY ] = 0;
+
+        console.log( Figures[i].Layer[ x ][ y ] );
+        rContext.clearRect(0, 0, canvas.width, canvas.height);
+        redrawCanvas();
+      }
+    }
 
   }
   else if( move ) {
