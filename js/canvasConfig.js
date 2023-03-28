@@ -99,56 +99,67 @@ function redrawCanvas() {
           break;
         case 'resize':
           
-          resize = true;
-          console.log(index);
-          X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
-          a = Figures[index].a; b = Figures[index].b;
+          if( Figures[index].type != "pen" ){
 
-          rContext.clearRect(0, 0, canvas.width, canvas.height);
-          redrawCanvas();
-          menuDisplayNone();
+            resize = true;
+            console.log(index);
+            X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+            a = Figures[index].a; b = Figures[index].b;
+  
+            rContext.clearRect(0, 0, canvas.width, canvas.height);
+            redrawCanvas();
+            menuDisplayNone();
+
+          }
+
           break;
         case 'rotate':
 
-          console.log(Figures[index]);
-          rotate = true;
-          X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+          if( Figures[index].type != "pen" ){
 
-          if( Figures[index].type == "line" ){
-            x_medio = (X1 + X2) / 2;
-            y_medio = (Y1 + Y2) / 2;  
-          } else {
-            x_medio = X1;
-            y_medio = Y1;
+            rotate = true;
+            X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
+  
+            if( Figures[index].type == "line" ){
+              x_medio = (X1 + X2) / 2;
+              y_medio = (Y1 + Y2) / 2;  
+            } else {
+              x_medio = X1;
+              y_medio = Y1;
+  
+              a = Figures[index].a; b = Figures[index].b;
+            }
+  
+            rContext.clearRect(0, 0, canvas.width, canvas.height);
+            redrawCanvas();
+            menuDisplayNone();
 
-            a = Figures[index].a; b = Figures[index].b;
           }
-
-          rContext.clearRect(0, 0, canvas.width, canvas.height);
-          redrawCanvas();
-          menuDisplayNone();
           
           break;
         case 'deleteBack':
 
-          console.log(Figures[index]);
-          Figures[index].backgroundColor = "";
-
-          if( Figures[index].type != "line" ){
+          if ( Figures[index].type != "pen" ) {
 
             Figures[index].backgroundColor = "";
 
-            X1 = Figures[index].sp1[0]; Y1 = Figures[index].sp1[1];
-            a = Figures[index].a;
-            b = Figures[index].b;
-            Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
-          
-            drawFigure( Figures[index].type );
-          }
+            if( Figures[index].type != "line" ){
+  
+              Figures[index].backgroundColor = "";
+  
+              X1 = Figures[index].sp1[0]; Y1 = Figures[index].sp1[1];
+              a = Figures[index].a;
+              b = Figures[index].b;
+              Figures[index].Layer = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
+            
+              drawFigure( Figures[index].type );
+            }
+  
+            rContext.clearRect(0, 0, canvas.width, canvas.height);
+            menuDisplayNone();
+            redrawCanvas();
 
-          rContext.clearRect(0, 0, canvas.width, canvas.height);
-          menuDisplayNone();
-          redrawCanvas();
+          }
 
           break;
         case 'clear':
@@ -175,10 +186,9 @@ function redrawCanvas() {
   
       case 'move':
         for(i = 0; i < Figures.length; i++) {
-          if( Figures[i].Layer[X1][Y1] == 1 || Figures[i].Layer[X1][Y1] == 2 ){
+          if( ( Figures[i].Layer[X1][Y1] == 1 || Figures[i].Layer[X1][Y1] == 2 ) && Figures[i].type != "pen" ){
   
             move = true;
-            
 
             X1 = Figures[i].sp1[0]; X2 = Figures[i].sp2[0]; Y1 = Figures[i].sp1[1]; Y2 = Figures[i].sp2[1];
             aux1 = X1;
@@ -210,7 +220,11 @@ function redrawCanvas() {
       }
 
       break;
-  
+    case 'pen':
+      
+      pen = true;
+
+      break;
     case 'color':
       for(i = 0; i < Figures.length; i++) {
         if( Figures[i].Layer[X1][Y1] == 1 ){
@@ -228,7 +242,7 @@ function redrawCanvas() {
 
   function drawBG() {
 
-    if( Figures[index].type != 'line' ){
+    if( Figures[index].type != 'line' && Figures[index].type != 'pen' ){
       if( (Figures[index].backgroundColor == "") ){
         Figures[index].backgroundColor = backgroundColor.value;
         rContext.fillStyle = Figures[index].backgroundColor;    

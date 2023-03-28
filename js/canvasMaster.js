@@ -50,6 +50,8 @@ function makeStruct( names ) {
 var struct = makeStruct("type,sp1,sp2,a,b,n,border,backgroundColor,borderColor,Layer");
 
 var draw = true;
+var pen = false;
+var penCanvas = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
 var move = false;
 var resize = false;
 var fill = false;
@@ -290,10 +292,10 @@ canvas.addEventListener( "mousedown", function(event){
   }
   else {
 
-    if( (document.getElementsByClassName("activeC")[0] != undefined) && ( !move && !resize && !rotate ) ){
+    if( (document.getElementsByClassName("activeC")[0] != undefined) && ( !move && !resize && !rotate && !pen ) ){
       configCanvas();
     }
-    else if( !resize && !rotate ){
+    else if( !resize && !rotate && !pen ){
       draw = false;
     }
 
@@ -395,6 +397,18 @@ canvas.addEventListener( "mouseup", function( event ) {
     redrawCanvas();
 
   }
+  else if ( pen ) {
+
+    var prueba = new struct( "pen", [0,0], [0,0], 0, 0, 0, slider.value, "", borderColor.value, penCanvas);
+    Figures.push( prueba );
+    penCanvas = new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) );
+
+    console.log( Figures );
+
+    redrawCanvas();
+    pen = false;
+
+  }
 
 
 });
@@ -402,7 +416,8 @@ canvas.addEventListener( "mouseup", function( event ) {
 //MUESTRA EL PREVIEW Y DIBUJA LAS LIENAS
 canvas.addEventListener( "mousemove", function(event){
   
-  rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
+  if( !pen )
+    rContextpreview.clearRect(0, 0, canvas.width, canvas.height);
 
   if( !draw ) {
   
@@ -412,6 +427,19 @@ canvas.addEventListener( "mousemove", function(event){
     Y2 = event.offsetY;
 
     drawFigure( document.getElementsByClassName("activeS")[0].id );
+
+  }
+  else if ( pen ) {
+
+    x = event.offsetX;
+    y = event.offsetY;
+
+    for( NX = 0; NX < S; NX++ )
+      for( NY = 0; NY < S; NY++ )
+        if( ( x + NX >= 0 && x + NX < canvas.width ) && ( y + NY >= 0 && y < canvas.height ) ){
+          penCanvas[ x + NX ][ y + NY ] = 1;
+          drawpix( x + NX, y + NY );
+        }
 
   }
   else if( move ) {
@@ -565,21 +593,23 @@ function drawpix(x,y){
     x = Math.round(x);
     y = Math.round(y);
 
-    if( index != undefined && (!move && !resize && !rotate ) ){
+    if( index != undefined && (!move && !resize && !rotate & !pen ) ){
       newp = pixelRotation( x, y );
       savePixel(Math.floor(newp[0]),Math.floor(newp[1]), Figures[index], Figures[index].border);
-      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
+      if( ( newp[0] >= 0 && newp[0]  < canvas.width ) && ( newp[1] >= 0 && newp[1] < canvas.height ) )
         rContext.fillRect(newp[0],newp[1],Figures[index].border,Figures[index].border);
-    }else if( draw && index == undefined ){
+    }else if( draw && index == undefined && !pen ){
       newp = pixelRotation( x, y );
       savePixel(newp[0],newp[1], Figures[Figures.length - 1], Figures[Figures.length - 1].border);
-      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
+      if( ( newp[0] >= 0 && newp[0]  < canvas.width ) && ( newp[1] >= 0 && newp[1] < canvas.height ) )
         rContext.fillRect(newp[0],newp[1],Figures[Figures.length - 1].border,Figures[Figures.length - 1].border);
     }
     else {
       newp = pixelRotation( x, y );
-      if( ( x >= 0 && x < canvas.width ) && ( y >= 0 && y < canvas.height ) )
+      if( ( newp[0] >= 0 && newp[0]  < canvas.width ) && ( newp[1] >= 0 && newp[1] < canvas.height ) ){
         rContextpreview.fillRect(newp[0],newp[1],slider.value,slider.value);
+
+      }
     }
 }
   
