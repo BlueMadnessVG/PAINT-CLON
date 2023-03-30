@@ -322,7 +322,7 @@ function drawTrigonometricCircle( X1, Y1, R ) {
 
   t = (Math.PI * 90) / 180;
 
-  for( i = 0; i < t; i += 0.0008 ){
+  for( i = 0; i < t; i += 0.003 ){
 
     x = Math.cos(i) * R;
     y = Math.sin(i) * R;
@@ -358,6 +358,35 @@ function drawElipse( X1, Y1, a, b ) {
   }
 
 }
+
+function drawsquare( X1, Y1, R ){
+
+  var top_left = [ (X1 - R / 2), ( Y1 + R / 2 ) ];
+  var top_right = [ (X1 + R / 2), ( Y1 + R / 2 ) ];
+  var bottom_left = [ (X1 - R / 2), ( Y1 - R / 2 ) ];
+  var bottom_right = [ (X1 + R / 2), ( Y1 - R / 2 ) ];
+
+  drawBresenham( top_left[0] , top_right[0], top_left[1] , top_right[1]  );
+  drawBresenham( bottom_left[0] , bottom_right[0], bottom_left[1] , bottom_right[1]  );
+  drawBresenham( top_left[0] , bottom_left[0], top_left[1] , bottom_left[1] );
+  drawBresenham( top_right[0] , bottom_right[0], top_right[1] , bottom_right[1] );
+
+}
+
+function drawRectangle( X1, Y1, a, b ){
+
+  var top_left = [ (X1 - a / 2), ( Y1 + b / 2 ) ];
+  var top_right = [ (X1 + a / 2), ( Y1 + b / 2 ) ];
+  var bottom_left = [ (X1 - a / 2), ( Y1 - b / 2 ) ];
+  var bottom_right = [ (X1 + a / 2), ( Y1 - b / 2 ) ];
+
+  drawBresenham( top_left[0] , top_right[0], top_left[1] , top_right[1]  );
+  drawBresenham( bottom_left[0] , bottom_right[0], bottom_left[1] , bottom_right[1]  );
+  drawBresenham( top_left[0] , bottom_left[0], top_left[1] , bottom_left[1] );
+  drawBresenham( top_right[0] , bottom_right[0], top_right[1] , bottom_right[1] );
+  
+}
+
 
 function drawTrigonometric(X1, Y1, R, S) {
 

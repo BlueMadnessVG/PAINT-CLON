@@ -81,7 +81,19 @@ window.onclick = function(event) {
 
 savePNG.onclick = function( event ) {
 
-  canvas.style.backgroundColor = "white";
+  var imgData = rContext.getImageData(0,0,canvas.width,canvas.height);
+  var data = imgData.data;
+
+  for(var i = 0; i < data.length; i+=4) {
+    if( data[i+3] < 255 ){
+      data[i] = 255;
+      data[i + 1] = 255;
+      data[i + 2] = 255;
+      data[i + 3] = 255;
+    }
+  }
+
+  rContext.putImageData( imgData, 0,0 );
   var dataURL = canvas.toDataURL();
 
   var link = document.createElement("a");
@@ -97,11 +109,17 @@ savePNG.onclick = function( event ) {
 
 saveCanvas.onclick = function( event ) {
 
-  var text = "";
-  Figures.forEach( function( Figure ) {
-    text +=  Figure.type + "/" + "" + Figure.sp1[0] + "/" + Figure.sp1[1] + "/" + Figure.sp2[0] + "/" + Figure.sp2[1] + "/" + Figure.a + "/" + Figure.b + "/" +
-             Figure.n + "/" + Figure.border + "/" + Figure.backgroundColor + "/" + Figure.borderColor + "\n";
-  } );
+  var text = "[";
+
+  for( var x = 0; x < Figures.length; x++ ){
+    var capa = Figures[x];
+    var aux = JSON.stringify( capa ).toString();
+    if( x == Figures.length - 1 )
+      text += aux;
+    else
+      text += aux + ",";  
+  }
+  text += "]";
 
   console.log("Text to save:", text);
 
@@ -135,39 +153,16 @@ inputFile.addEventListener( "change", function( event ) {
   Figures.splice(0, Figures.length);
 
   var file = this.files[0];
-  var reader = new FileReader();
-  reader.onload = function() {
-    var data = reader.result;
+  let reader = new FileReader();
+  reader.readAsText( file );
+  
+   reader.onload = function() {
+      
+      console.log(JSON.parse( reader.result ));
+      Figures = JSON.parse( reader.result );
+      redrawCanvas();
+    }; 
 
-    data.split("\n").forEach( function( line ) {
-
-      var parts = line.split("/");
-
-      if( parts[0] != "" ) {
-        var dataRestored = new struct( parts[0], [parseInt(parts[1]) , parseInt(parts[2]) ], [parseInt(parts[3]) , parseInt(parts[4]) ], parseInt(parts[5]), parseInt(parts[6]), parts[7], parts[8], parts[9], parts[10], new Array(canvas.width).fill(0).map( () => new Array(canvas.height).fill(0) ) );
-        Figures.push( dataRestored );
-
-        index =  Figures.length - 1;
-        X1 = Figures[index].sp1[0]; X2 = Figures[index].sp2[0]; 
-        Y1 = Figures[index].sp1[1]; Y2 = Figures[index].sp2[1];
-
-        if( Figures[index].type == "shapes" || Figures[index].type == "ellipse" ){
-          a = Figures[index].a;
-          b = Figures[index].b;
-        }
-
-        rContext.fillStyle = Figures[index].borderColor;
-        drawFigure( Figures[index].type );
-        redrawBG( Figures[index].type );
-        X1 = undefined; X2 = undefined; Y1 = undefined; Y2 = undefined; R = 0; a = 0; b = 0; index = undefined;
-      }
-
-    } );
-    
-  };
-
-  reader.readAsText(file);
-  console.log(Figures);
   span.click();
 
 } );
@@ -220,6 +215,18 @@ function drawFigure( type ) {
         if( X2 != null || Y2 != null )
           drawBresenham(X1, X2, Y1, Y2);
         break;
+      case 'square':
+        if( a != 0 )
+          drawsquare( X1, Y1, a );
+        break;
+      case 'rectangle':
+        if( a != 0 || b != 0 )
+          drawRectangle( X1, Y1, a, b );
+          break;
+      case 'circle':
+        if( a != 0 )
+          drawTrigonometricCircle( X1, Y1, a );
+        break;
       case 'ellipse':
         if( a != 0 || b != 0){
           drawElipse(X1, Y1, a, b);
@@ -240,17 +247,8 @@ window.addEventListener("contextmenu", e => e.preventDefault());
 
 function newab(offsetX, offsetY) {
 
-  if( X2 > offsetX ) {
-    a += X2 - offsetX;
-  }else if( X2 < offsetX ){
-    a -= offsetX - X2;
-  }
-  else if( Y2 > offsetY ) {
-    b += Y2 - offsetY;
-  }
-  else if( Y2 < offsetY ) {
-    b -= offsetY - Y2;
-  } 
+  a = offsetX - X1;
+  b = offsetY - X2;
 
 }
 

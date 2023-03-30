@@ -194,7 +194,7 @@ function redrawCanvas() {
             aux1 = X1;
             aux2 = Y1;
   
-            if( Figures[i].type == "shapes" || Figures[i].type == "ellipse" ){
+            if( Figures[i].type != "line" ){
               a = Figures[i].a;
               b = Figures[i].b;
             }
@@ -250,7 +250,7 @@ function redrawCanvas() {
     if( Figures[index].type != 'line' && Figures[index].type != 'pen' ){
       if( (Figures[index].backgroundColor == "") ){
         Figures[index].backgroundColor = backgroundColor.value;
-        rContext.fillStyle = Figures[index].backgroundColor;    
+        rContext.fillStyle = Figures[index].backgroundColor; 
 
         floodFillRecL( Figures[index].sp1[0], Figures[index].sp1[1] );
         floodFillRecR( Figures[index].sp1[0] + 1, Figures[index].sp1[1] );  
